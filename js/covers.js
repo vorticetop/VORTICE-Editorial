@@ -7,8 +7,9 @@ const BookCoverRenderer = {
   renderSVG(book, options = {}) {
     const { width = 440, height = 660, isThumbnail = false } = options;
 
-    if (book.coverImage) {
-      return `<img src="${book.coverImage}" alt="${book.title}" class="vortice-book-cover-img" data-book-id="${book.id}" loading="lazy">`;
+    const coverSrc = book.coverImage || (book.id === 'vortice-01' ? 'img/Cover1.jpg' : null);
+    if (coverSrc) {
+      return `<img src="${coverSrc}" alt="${book.title}" class="vortice-book-cover-img" data-book-id="${book.id}" loading="lazy">`;
     }
 
     const { title, subtitle, author, number, year, isbn, coverStyle } = book;
