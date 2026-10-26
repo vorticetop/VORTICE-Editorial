@@ -105,6 +105,16 @@
             </svg>
           </button>
 
+          <!-- Botón de Menú Móvil (Hamburger) -->
+          <button class="action-btn mobile-menu-toggle" id="btn-mobile-menu" onclick="toggleMobileMenu()" title="Abrir menú"
+            aria-label="Abrir menú de navegación" aria-expanded="false">
+            <svg id="mobile-menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
           <!-- Botón Guardados / Wishlist -->
           <button class="action-btn" id="btn-wishlist-trigger"
             onclick="showToast('Lista de lectura: ' + AppState.wishlist.length + ' libros guardados')"
@@ -129,6 +139,19 @@
             <span class="badge-counter" id="cart-badge" style="display: none;">0</span>
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Panel Desplegable de Navegación Móvil -->
+    <div class="mobile-nav-panel" id="mobile-nav-panel" aria-hidden="true">
+      <div class="container">
+        <ul class="mobile-nav-links">
+          <li><a href="#catalog-section" class="mobile-nav-link" onclick="closeMobileMenu()">Catálogo General</a></li>
+          <li><a href="#filter-tabs-container" class="mobile-nav-link" onclick="closeMobileMenu()">Colecciones</a></li>
+          <li><a href="#manifesto-section" class="mobile-nav-link" onclick="closeMobileMenu()">Manifiesto</a></li>
+          <li><a href="#footer-colophon" class="mobile-nav-link" onclick="closeMobileMenu()">Librerías</a></li>
+          <li><a href="#footer-colophon" class="mobile-nav-link" onclick="closeMobileMenu()">Contacto</a></li>
+        </ul>
       </div>
     </div>
   </header>

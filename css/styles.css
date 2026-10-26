@@ -333,9 +333,56 @@ button#btn-cart-trigger {
   display: none;
 }
 
-/* Botón menú móvil */
-.mobile-toggle {
+/* Botón menú móvil y panel desplegable */
+.mobile-menu-toggle {
   display: none;
+}
+
+.mobile-nav-panel {
+  display: none;
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 0 1.25rem;
+}
+
+.mobile-nav-panel.active {
+  display: block;
+  animation: slideDownMobile 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownMobile {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-nav-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-nav-link {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  padding: 0.85rem 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  transition: color var(--transition-fast), padding-left var(--transition-fast);
+}
+
+.mobile-nav-links li:last-child .mobile-nav-link {
+  border-bottom: none;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+  color: var(--accent-vermilion);
+  padding-left: 0.75rem;
 }
 
 /* ==========================================================================
@@ -1917,43 +1964,268 @@ button#btn-cart-trigger {
 
 @media (max-width: 768px) {
   :root {
-    --container-pad: 20px;
-    --header-height: 64px;
+    --container-pad: 16px;
+    --header-height: 60px;
   }
+
+  /* Cabecera Móvil */
   .nav-menu {
     display: none;
   }
-  .mobile-toggle {
+  .mobile-menu-toggle {
     display: inline-flex;
   }
-  .books-grid, .books-grid.layout-dense {
+  img.brand-logo-img {
+    width: 95px;
+  }
+
+  /* Marquesina Superior */
+  .top-ticker {
+    font-size: 0.68rem;
+    padding: 0.4rem 0;
+  }
+
+  /* Hero Principal */
+  .hero-spotlight {
+    padding: 2rem 0 3rem;
+  }
+  .hero-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+  .hero-visual {
+    order: -1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    perspective: 800px;
+    padding: 0.5rem 0;
+  }
+  .hero-book-3d {
+    width: min(230px, 68vw);
+    height: auto;
+    aspect-ratio: 440 / 660;
+    transform: rotateY(-8deg) rotateX(4deg);
+    box-shadow: -8px 14px 28px rgba(0, 0, 0, 0.22);
+  }
+  .hero-book-3d:hover {
+    transform: rotateY(-3deg) rotateX(2deg) translateY(-4px);
+  }
+  .hero-title {
+    font-size: clamp(1.85rem, 6.5vw, 2.6rem);
+    margin-bottom: 0.75rem;
+  }
+  .hero-author {
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+  }
+  .hero-quote {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    padding-left: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .hero-specs-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem 1rem;
+    padding: 0.85rem 0;
+    margin-bottom: 1.5rem;
+  }
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  .hero-actions .btn-primary,
+  .hero-actions .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem 1rem;
+  }
+
+  /* Barra de Controles y Filtros */
+  .catalog-controls {
+    top: var(--header-height);
+    padding: 0.75rem 0;
+  }
+  .controls-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .filter-tabs {
+    width: 100%;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-tab {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+  }
+  .controls-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .search-box-inline {
+    flex: 1;
+    min-width: 0;
+  }
+  .search-input {
+    width: 100%;
+    font-size: 16px; /* Evita zoom automático en Safari iOS */
+    padding: 0.45rem 0.65rem 0.45rem 2rem;
+  }
+  .search-input:focus {
+    width: 100%;
+  }
+  .sort-select {
+    font-size: 0.75rem;
+    padding: 0.45rem 0.5rem;
+    flex-shrink: 0;
+  }
+  .layout-switchers {
+    flex-shrink: 0;
+  }
+  .layout-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .catalog-status-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  /* Cuadrícula de Libros */
+  .books-grid,
+  .books-grid.layout-dense {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+  }
+  .book-card-cover-wrap {
+    max-width: 320px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .book-card-info {
+    max-width: 320px;
+    margin: 0 auto;
+    width: 100%;
   }
   .manifesto-columns {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+
+  /* Ficha Técnica (Drawer) */
+  .book-detail-drawer {
+    width: 100vw;
+  }
+  .drawer-header {
+    padding: 1rem 1.25rem;
+  }
+  .drawer-body {
+    padding: 1.25rem 1.25rem 3rem;
   }
   .drawer-book-presentation {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
   .drawer-cover-wrap {
-    max-width: 240px;
+    max-width: 220px;
     margin: 0 auto;
   }
+  .drawer-specs-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Visor de Lectura (Reader) */
+  .reader-header {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .reader-book-info {
+    min-width: 0;
+    flex: 1;
+  }
+  .reader-title-label {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  .reader-controls {
+    gap: 0.5rem;
+  }
+  .reader-content-wrap {
+    padding: 2rem 1.25rem 4rem;
+  }
+  .reader-paragraphs p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Modales y Notificaciones */
+  .search-modal {
+    padding: 1.5rem 1rem;
+  }
+  .toast-notice {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+  }
+
+  /* Pie de Página */
   .footer-top-grid {
     grid-template-columns: 1fr;
     gap: 2.5rem;
   }
-  .search-input {
-    width: 140px;
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
-  .search-input:focus {
-    width: 180px;
+  .footer-bottom-links {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  img.brand-logo-img {
+    width: 85px;
+  }
+  .header-actions {
+    gap: 0.35rem;
+  }
+  .action-btn {
+    width: 36px;
+    height: 36px;
   }
   .hero-book-3d {
-    width: 240px;
-    height: 360px;
+    width: 195px;
+  }
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  .hero-specs-row {
+    grid-template-columns: 1fr;
+  }
+  .newsletter-input-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .newsletter-input-group .btn-newsletter {
+    width: 100%;
   }
 }
