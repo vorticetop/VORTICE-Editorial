@@ -469,9 +469,9 @@ const BOOKS_DATA = [
 // Colecciones editoriales
 const COLLECTIONS_DATA = [
   { id: "all", name: "Catálogo Completo", count: 12 },
-  { id: "filosofia", name: "Filosofía Crítica", count: 3, code: "COL-01", description: "Ensayos sobre estética, pensamiento político y fenomenología contemporánea." },
-  { id: "arquitectura", name: "Arquitectura & Ensayo", count: 2, code: "COL-02", description: "Morfología espacial, historia del diseño tipográfico y teoría constructiva." },
-  { id: "ficcion", name: "Ficción Especulativa", count: 3, code: "COL-03", description: "Narrativa de vanguardia, atmósferas liminares y experimentación formal." },
-  { id: "poesia", name: "Poesía Contemporánea", count: 2, code: "COL-04", description: "Voces poéticas radicales, apropiaciones textuales y sonoridades mínimas." },
-  { id: "arte", name: "Arte & Estética", count: 2, code: "COL-05", description: "Cultura visual, crítica de la imagen técnica y nuevos medios sintéticos." }
+  { id: "cultura", name: "Cultura", count: 3, code: "COL-01", description: "Ensayos sobre estética, pensamiento político y fenomenología contemporánea." },
+  { id: "poesia", name: "Poesía", count: 2, code: "COL-02", description: "Morfología espacial, historia del diseño tipográfico y teoría constructiva." },
+  { id: "arte", name: "Arte", count: 3, code: "COL-03", description: "Narrativa de vanguardia, atmósferas liminares y experimentación formal." },
+  { id: "moda", name: "Moda", count: 2, code: "COL-04", description: "Voces poéticas radicales, apropiaciones textuales y sonoridades mínimas." },
+  { id: "tendencias", name: "Tendencias", count: 2, code: "COL-05", description: "Cultura visual, crítica de la imagen técnica y nuevos medios sintéticos." }
 ];
