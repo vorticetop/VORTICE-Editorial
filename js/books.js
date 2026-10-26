@@ -13,6 +13,7 @@ const BOOKS_DATA = [
     badge: "Novedad",
     featured: true,
     isbn: "978-84-128941-0-2",
+    coverImage: "img/Cover1.jpg",
     pages: 312,
     dimensions: "145 x 220 mm",
     binding: "Tapa dura entelada en lino negro con serigrafía blanca y cinta de registro",

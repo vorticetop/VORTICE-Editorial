@@ -6,6 +6,11 @@
 const BookCoverRenderer = {
   renderSVG(book, options = {}) {
     const { width = 440, height = 660, isThumbnail = false } = options;
+
+    if (book.coverImage) {
+      return `<img src="${book.coverImage}" alt="${book.title}" class="vortice-book-cover-img" data-book-id="${book.id}" loading="lazy">`;
+    }
+
     const { title, subtitle, author, number, year, isbn, coverStyle } = book;
     const { bg, text, accent, theme, label } = coverStyle;
 
