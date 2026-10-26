@@ -507,7 +507,12 @@ function openReader(bookId) {
 
   const contentWrap = document.getElementById('reader-paragraphs');
   contentWrap.className = `reader-paragraphs ${AppState.readerFont === 'sans' ? 'font-sans' : ''}`;
-  contentWrap.innerHTML = book.sampleChapter.content.map(p => `<p>${p}</p>`).join('');
+  contentWrap.innerHTML = book.sampleChapter.content.map(p => {
+    if (typeof p === 'string' && (p.trim().startsWith('<div') || p.trim().startsWith('<iframe'))) {
+      return p;
+    }
+    return `<p>${p}</p>`;
+  }).join('');
 
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';

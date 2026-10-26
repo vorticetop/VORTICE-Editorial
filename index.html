@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EDITORIAL VÓRTICE — Catálogo General de Libros y Ediciones Críticas</title>
-  
-  <meta name="description" content="Editorial Vórtice. Sello independiente de ensayo contemporáneo, filosofía crítica, narrativa de vanguardia, arquitectura y poesía visual. Catálogo general de libros impresos.">
-  <meta name="keywords" content="editorial vortice, libros, catalogo, filosofia critica, arquitectura, tipografia suiza, pentagram, diseno editorial">
+  <title>VÓRTICE EDITORIAL — Catálogo General de Libros y Ediciones</title>
+
+  <meta name="description"
+    content="Editorial Vórtice. Sello independiente de ensayo contemporáneo, filosofía crítica, narrativa de vanguardia, arquitectura y poesía visual. Catálogo general de libros impresos.">
+  <meta name="keywords"
+    content="editorial vortice, libros, catalogo, filosofia critica, arquitectura, tipografia suiza, pentagram, diseno editorial">
   <meta name="author" content="Editorial Vórtice">
 
   <!-- Open Graph -->
   <meta property="og:title" content="EDITORIAL VÓRTICE — Catálogo General de Libros">
-  <meta property="og:description" content="Editorial independiente de ensayo, vanguardia literaria y diseño suizo contemporáneo.">
+  <meta property="og:description"
+    content="Editorial independiente de ensayo, vanguardia literaria y diseño suizo contemporáneo.">
   <meta property="og:type" content="website">
 
   <!-- Favicon SVG con glifo de Vórtice -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><path d='M50 20 L50 80 M20 50 L80 50 M29 29 L71 71 M29 71 L71 29' stroke='%23fff' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='%23ff3300'/></svg>">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><path d='M50 20 L50 80 M20 50 L80 50 M29 29 L71 71 M29 71 L71 29' stroke='%23fff' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='%23ff3300'/></svg>">
 
   <!-- Hojas de Estilo -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
   <!-- ==========================================================================
@@ -62,14 +68,15 @@
     <div class="container">
       <div class="header-inner">
         <!-- Logotipo -->
-        <a href="#hero-spotlight-section" class="brand-logo" id="brand-logo-link" aria-label="Editorial Vórtice - Inicio">
+        <a href="#hero-spotlight-section" class="brand-logo" id="brand-logo-link"
+          aria-label="Editorial Vórtice - Inicio">
           <svg class="brand-symbol" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="6"/>
-            <line x1="50" y1="12" x2="50" y2="88" stroke="currentColor" stroke-width="6"/>
-            <line x1="12" y1="50" x2="88" y2="50" stroke="currentColor" stroke-width="6"/>
-            <line x1="23" y1="23" x2="77" y2="77" stroke="currentColor" stroke-width="4" stroke-dasharray="6 4"/>
-            <line x1="23" y1="77" x2="77" y2="23" stroke="currentColor" stroke-width="4" stroke-dasharray="6 4"/>
-            <circle cx="50" cy="50" r="8" fill="var(--accent-vermilion)"/>
+            <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="6" />
+            <line x1="50" y1="12" x2="50" y2="88" stroke="currentColor" stroke-width="6" />
+            <line x1="12" y1="50" x2="88" y2="50" stroke="currentColor" stroke-width="6" />
+            <line x1="23" y1="23" x2="77" y2="77" stroke="currentColor" stroke-width="4" stroke-dasharray="6 4" />
+            <line x1="23" y1="77" x2="77" y2="23" stroke="currentColor" stroke-width="4" stroke-dasharray="6 4" />
+            <circle cx="50" cy="50" r="8" fill="var(--accent-vermilion)" />
           </svg>
           <span class="brand-title">VÓRTICE</span>
           <span class="brand-badge">EDICIONES</span>
@@ -89,7 +96,8 @@
         <!-- Acciones del Usuario -->
         <div class="header-actions">
           <!-- Botón de Búsqueda Modal -->
-          <button class="action-btn" id="btn-search-trigger" onclick="openSearchModal()" title="Buscar libros (Cmd+K)" aria-label="Abrir buscador">
+          <button class="action-btn" id="btn-search-trigger" onclick="openSearchModal()" title="Buscar libros (Cmd+K)"
+            aria-label="Abrir buscador">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -97,22 +105,29 @@
           </button>
 
           <!-- Botón de Inversión de Tema (Dark/Light) -->
-          <button class="action-btn" id="btn-theme-toggle" onclick="toggleTheme()" title="Invertir contraste visual" aria-label="Cambiar tema claro u oscuro">
-            <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          <button class="action-btn" id="btn-theme-toggle" onclick="toggleTheme()" title="Invertir contraste visual"
+            aria-label="Cambiar tema claro u oscuro">
+            <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
           </button>
 
           <!-- Botón Guardados / Wishlist -->
-          <button class="action-btn" id="btn-wishlist-trigger" onclick="showToast('Lista de lectura: ' + AppState.wishlist.length + ' libros guardados')" title="Libros guardados" aria-label="Ver lista de lectura guardada">
+          <button class="action-btn" id="btn-wishlist-trigger"
+            onclick="showToast('Lista de lectura: ' + AppState.wishlist.length + ' libros guardados')"
+            title="Libros guardados" aria-label="Ver lista de lectura guardada">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+              </path>
             </svg>
             <span class="badge-counter" id="wishlist-badge" style="display: none;">0</span>
           </button>
 
           <!-- Botón de Cesta de Libros -->
-          <button class="action-btn bag-btn" id="btn-cart-trigger" onclick="openCart()" title="Abrir cesta de compra" aria-label="Abrir cesta de libros">
+          <button class="action-btn bag-btn" id="btn-cart-trigger" onclick="openCart()" title="Abrir cesta de compra"
+            aria-label="Abrir cesta de libros">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
               <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -148,11 +163,13 @@
         <div class="controls-right">
           <!-- Búsqueda Rápida en Línea -->
           <div class="search-box-inline">
-            <svg class="search-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg class="search-icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" class="search-input" id="catalog-search-input" placeholder="Filtrar catálogo..." aria-label="Buscar en el catálogo">
+            <input type="text" class="search-input" id="catalog-search-input" placeholder="Filtrar catálogo..."
+              aria-label="Buscar en el catálogo">
           </div>
 
           <!-- Selector de Orden -->
@@ -167,7 +184,8 @@
 
           <!-- Modos de Disposición (3 cols, 4 cols compacta, tabla índice) -->
           <div class="layout-switchers" role="group" aria-label="Modo de visualización">
-            <button class="layout-btn active" data-layout="grid" onclick="setLayout('grid')" title="Retícula Visual (3 Columnas)" aria-label="Retícula estándar">
+            <button class="layout-btn active" data-layout="grid" onclick="setLayout('grid')"
+              title="Retícula Visual (3 Columnas)" aria-label="Retícula estándar">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"></rect>
                 <rect x="14" y="3" width="7" height="7"></rect>
@@ -175,7 +193,8 @@
                 <rect x="3" y="14" width="7" height="7"></rect>
               </svg>
             </button>
-            <button class="layout-btn" data-layout="dense" onclick="setLayout('dense')" title="Retícula Compacta (4 Columnas)" aria-label="Retícula compacta">
+            <button class="layout-btn" data-layout="dense" onclick="setLayout('dense')"
+              title="Retícula Compacta (4 Columnas)" aria-label="Retícula compacta">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="2" y="2" width="4" height="4"></rect>
                 <rect x="8" y="2" width="4" height="4"></rect>
@@ -191,7 +210,8 @@
                 <rect x="20" y="18" width="4" height="4"></rect>
               </svg>
             </button>
-            <button class="layout-btn" data-layout="index" onclick="setLayout('index')" title="Índice Tipográfico / Archivo Pentagram" aria-label="Vista tabla índice">
+            <button class="layout-btn" data-layout="index" onclick="setLayout('index')"
+              title="Índice Tipográfico / Archivo Pentagram" aria-label="Vista tabla índice">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="8" y1="6" x2="21" y2="6"></line>
                 <line x1="8" y1="12" x2="21" y2="12"></line>
@@ -229,7 +249,8 @@
   <section class="editorial-manifesto" id="manifesto-section" aria-label="Manifiesto Editorial">
     <div class="container">
       <h2 class="manifesto-lead">
-        El libro no es un soporte pasivo de datos; es un <span>artefacto arquitectónico</span> donde la proporción, la masa tipográfica y el tacto del papel forman el propio pensamiento.
+        El libro no es un soporte pasivo de datos; es un <span>artefacto arquitectónico</span> donde la proporción, la
+        masa tipográfica y el tacto del papel forman el propio pensamiento.
       </h2>
 
       <div class="manifesto-columns">
@@ -237,7 +258,9 @@
           <span class="manifesto-num">PRINCIPIO 01</span>
           <h3 class="manifesto-title">Rigor Tipográfico Suizo</h3>
           <p class="manifesto-p">
-            Diseñamos cada página siguiendo retículas armónicas calculadas al milímetro. La elección de tipos de fundición clásica y contemporánea responde a la cadencia de lectura exigida por cada texto, nunca a modas decorativas efímeras.
+            Diseñamos cada página siguiendo retículas armónicas calculadas al milímetro. La elección de tipos de
+            fundición clásica y contemporánea responde a la cadencia de lectura exigida por cada texto, nunca a modas
+            decorativas efímeras.
           </p>
         </div>
 
@@ -245,7 +268,9 @@
           <span class="manifesto-num">PRINCIPIO 02</span>
           <h3 class="manifesto-title">Pensamiento Radical</h3>
           <p class="manifesto-p">
-            Nuestro catálogo acoge ensayos que cuestionan la velocidad algorítmica, la degradación del espacio público y las formas hegemónicas de la representación visual. Publicamos autores que expanden los límites del debate contemporáneo.
+            Nuestro catálogo acoge ensayos que cuestionan la velocidad algorítmica, la degradación del espacio público y
+            las formas hegemónicas de la representación visual. Publicamos autores que expanden los límites del debate
+            contemporáneo.
           </p>
         </div>
 
@@ -253,7 +278,9 @@
           <span class="manifesto-num">PRINCIPIO 03</span>
           <h3 class="manifesto-title">Materialidad Consciente</h3>
           <p class="manifesto-p">
-            Trabajamos exclusivamente con molinos de papel certificados FSC libres de ácido y cloro elemental. Encuadernaciones cosidas al hilo vegetal para garantizar que los volúmenes envejezcan con dignidad durante más de un siglo.
+            Trabajamos exclusivamente con molinos de papel certificados FSC libres de ácido y cloro elemental.
+            Encuadernaciones cosidas al hilo vegetal para garantizar que los volúmenes envejezcan con dignidad durante
+            más de un siglo.
           </p>
         </div>
       </div>
@@ -270,7 +297,8 @@
         <div class="footer-col">
           <h4>Editorial Vórtice S.L.</h4>
           <p class="footer-manifesto-snippet">
-            Sello editorial independiente fundado en Basilea y Madrid. Dedicado a la literatura de ensayo, filosofía espacial, crítica del arte y traducciones críticas de textos fundamentales del siglo XX y XXI.
+            Sello editorial independiente fundado en Basilea y Madrid. Dedicado a la literatura de ensayo, filosofía
+            espacial, crítica del arte y traducciones críticas de textos fundamentales del siglo XX y XXI.
           </p>
           <p style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">
             ISSN 2984-1102 · Depósito Legal M-18492-2025
@@ -293,11 +321,18 @@
         <div class="footer-col">
           <h4>Servicios & Distribución</h4>
           <ul class="footer-links">
-            <li><a href="javascript:void(0)" onclick="showToast('Red de Librerías Independientes asociadas: 180 puntos')">Red de Librerías</a></li>
-            <li><a href="javascript:void(0)" onclick="showToast('Protocolo de manuscritos: recepción abierta de enero a marzo')">Envío de Manuscritos</a></li>
-            <li><a href="javascript:void(0)" onclick="showToast('Dossier de Prensa descargable próximamente')">Kit de Prensa</a></li>
-            <li><a href="javascript:void(0)" onclick="showToast('Derechos de traducción: rights@vortice-editorial.com')">Derechos Internacionales</a></li>
-            <li><a href="javascript:void(0)" onclick="showToast('Atención al lector: contacto@vortice-editorial.com')">Contacto Directo</a></li>
+            <li><a href="javascript:void(0)"
+                onclick="showToast('Red de Librerías Independientes asociadas: 180 puntos')">Red de Librerías</a></li>
+            <li><a href="javascript:void(0)"
+                onclick="showToast('Protocolo de manuscritos: recepción abierta de enero a marzo')">Envío de
+                Manuscritos</a></li>
+            <li><a href="javascript:void(0)" onclick="showToast('Dossier de Prensa descargable próximamente')">Kit de
+                Prensa</a></li>
+            <li><a href="javascript:void(0)"
+                onclick="showToast('Derechos de traducción: rights@vortice-editorial.com')">Derechos Internacionales</a>
+            </li>
+            <li><a href="javascript:void(0)"
+                onclick="showToast('Atención al lector: contacto@vortice-editorial.com')">Contacto Directo</a></li>
           </ul>
         </div>
 
@@ -305,11 +340,13 @@
         <div class="footer-col">
           <h4>Gaceta Editorial</h4>
           <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
-            Enviamos mensualmente ensayos breves inéditos, citas de tipografía y novedades antes de su llegada a imprenta.
+            Enviamos mensualmente ensayos breves inéditos, citas de tipografía y novedades antes de su llegada a
+            imprenta.
           </p>
           <form class="newsletter-form" id="newsletter-form">
             <div class="newsletter-input-group">
-              <input type="email" class="newsletter-input" placeholder="Tu correo electrónico..." required aria-label="Correo para el boletín">
+              <input type="email" class="newsletter-input" placeholder="Tu correo electrónico..." required
+                aria-label="Correo para el boletín">
               <button type="submit" class="btn-newsletter" aria-label="Suscribirme">Unirme</button>
             </div>
             <p class="newsletter-legal">Sin publicidad algorítmica ni rastreo de datos comerciales.</p>
@@ -343,7 +380,8 @@
         <div class="footer-bottom-links">
           <a href="javascript:void(0)" onclick="showToast('Aviso Legal y Condiciones de Contratación')">Aviso Legal</a>
           <a href="javascript:void(0)" onclick="showToast('Política de Privacidad y Cookies estricta')">Privacidad</a>
-          <a href="javascript:void(0)" onclick="showToast('Tipografías: Neue Haas Grotesk, Space Grotesk, Newsreader')">Colofón Tipográfico</a>
+          <a href="javascript:void(0)"
+            onclick="showToast('Tipografías: Neue Haas Grotesk, Space Grotesk, Newsreader')">Colofón Tipográfico</a>
         </div>
       </div>
     </div>
@@ -357,7 +395,8 @@
   <!-- ==========================================================================
        Panel Deslizante: Ficha Detallada del Libro (Pentagram Case Study Drawer)
        ========================================================================== -->
-  <aside class="book-detail-drawer" id="book-detail-drawer" role="dialog" aria-modal="true" aria-label="Ficha Técnica del Libro">
+  <aside class="book-detail-drawer" id="book-detail-drawer" role="dialog" aria-modal="true"
+    aria-label="Ficha Técnica del Libro">
     <!-- Contenido inyectado dinámicamente por openBookDetail() en app.js -->
   </aside>
 
@@ -372,11 +411,15 @@
       </div>
 
       <div class="reader-controls">
-        <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Tipografía:</span>
-        <button class="reader-font-toggle active" data-font="serif" onclick="toggleReaderFont('serif')" aria-label="Fuente Serif">Serif</button>
-        <button class="reader-font-toggle" data-font="sans" onclick="toggleReaderFont('sans')" aria-label="Fuente Sans">Sans</button>
-        
-        <button class="drawer-close-btn" onclick="closeReader()" title="Cerrar visor de lectura (Esc)" aria-label="Cerrar visor">
+        <span
+          style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Tipografía:</span>
+        <button class="reader-font-toggle active" data-font="serif" onclick="toggleReaderFont('serif')"
+          aria-label="Fuente Serif">Serif</button>
+        <button class="reader-font-toggle" data-font="sans" onclick="toggleReaderFont('sans')"
+          aria-label="Fuente Sans">Sans</button>
+
+        <button class="drawer-close-btn" onclick="closeReader()" title="Cerrar visor de lectura (Esc)"
+          aria-label="Cerrar visor">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -425,7 +468,7 @@
         <span id="cart-subtotal-val">0.00 €</span>
       </div>
       <p class="cart-shipping-note">Envío gratuito a España peninsular en pedidos superiores a 40 €.</p>
-      
+
       <button class="btn-primary btn-checkout" onclick="checkout()">
         Tramitar Pedido · <span id="cart-total-val">0.00 €</span>
       </button>
@@ -442,7 +485,8 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" class="search-modal-input" id="search-modal-input" placeholder="Buscar por título, autor, colección o ISBN..." oninput="handleSearchModalInput(this.value)">
+        <input type="text" class="search-modal-input" id="search-modal-input"
+          placeholder="Buscar por título, autor, colección o ISBN..." oninput="handleSearchModalInput(this.value)">
         <button class="drawer-close-btn" onclick="closeSearchModal()" title="Cerrar (Esc)" aria-label="Cerrar búsqueda">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -467,4 +511,5 @@
   <script src="js/covers.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>
