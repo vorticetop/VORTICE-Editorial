@@ -1,3 +1,4 @@
+/* cspell:disable */
 /**
  * Editorial Vórtice - Aplicación Principal
  * Lógica interactiva: catálogo, retícula dinámica, visor de lectura y cesta

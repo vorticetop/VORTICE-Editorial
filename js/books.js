@@ -1,3 +1,4 @@
+/* cspell:disable */
 // Catálogo de Libros - Editorial Vórtice (Estilo Pentagram)
 const BOOKS_DATA = [
   {
