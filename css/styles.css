@@ -1,0 +1,1927 @@
+/* ==========================================================================
+   EDITORIAL VÓRTICE - Pentagram Inspired Design System & Stylesheet
+   Estilo Suizo Internacional, Tipografía Grotesca, Alto Contraste y Retícula
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Paleta Base Light (Modo Papel Minimalista) */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8F8F7;
+  --bg-tertiary: #EFEFEF;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --bg-card: #FFFFFF;
+  --bg-drawer: #FFFFFF;
+  
+  --text-primary: #0A0A0A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #808080;
+  --text-inverse: #FFFFFF;
+  
+  --border-color: #E2E2E0;
+  --border-dark: #0A0A0A;
+  --border-light: #ECECE9;
+  
+  --accent-vermilion: #FF3300;
+  --accent-cobalt: #0047FF;
+  --accent-gold: #C5A059;
+  --accent-emerald: #00875A;
+  
+  /* Tipografía */
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-editorial: 'Newsreader', Garamond, Georgia, serif;
+  --font-mono: 'Space Grotesk', 'Courier New', monospace;
+  
+  /* Dimensiones y espaciados */
+  --header-height: 72px;
+  --container-max: 1560px;
+  --container-pad: 32px;
+  --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-book: -8px 12px 28px rgba(0, 0, 0, 0.18), -2px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Modo Dark (Inversión Tipográfica Pentagram) */
+[data-theme="dark"] {
+  --bg-primary: #0D0D0D;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1E1E1E;
+  --bg-overlay: rgba(0, 0, 0, 0.85);
+  --bg-card: #141414;
+  --bg-drawer: #121212;
+  
+  --text-primary: #F5F5F3;
+  --text-secondary: #B0B0AE;
+  --text-muted: #737370;
+  --text-inverse: #0A0A0A;
+  
+  --border-color: #262626;
+  --border-dark: #F5F5F3;
+  --border-light: #1F1F1F;
+  
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --shadow-book: -8px 12px 32px rgba(0, 0, 0, 0.5), -2px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+   Reset y Fundamentos
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  overflow-x: hidden;
+  transition: background-color var(--transition-smooth), color var(--transition-smooth);
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--container-pad);
+  padding-right: var(--container-pad);
+}
+
+/* ==========================================================================
+   Barra Superior de Avisos (Ticker Marquee)
+   ========================================================================== */
+.top-ticker {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 7px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 100;
+  position: relative;
+}
+
+.ticker-track {
+  display: inline-flex;
+  animation: tickerScroll 36s linear infinite;
+  gap: 3rem;
+  padding-right: 3rem;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ticker-dot {
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent-vermilion);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ==========================================================================
+   Cabecera Principal (Header Estilo Pentagram)
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+}
+
+/* Logotipo Pentagram */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+}
+
+.brand-symbol {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand-logo:hover .brand-symbol {
+  transform: rotate(180deg);
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.brand-badge {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+/* Menú de Navegación */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-link {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  position: relative;
+  padding: 0.4rem 0;
+  transition: color var(--transition-fast);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--text-primary);
+  transition: width var(--transition-fast);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--text-primary);
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+  width: 100%;
+}
+
+/* Controles de Cabecera */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.action-btn:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+.badge-counter {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: var(--accent-vermilion);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.bag-btn {
+  width: auto;
+  padding: 0 1rem;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Botón menú móvil */
+.mobile-toggle {
+  display: none;
+}
+
+/* ==========================================================================
+   Hero Spotlight (Caso de Estudio Destacado Pentagram)
+   ========================================================================== */
+.hero-spotlight {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 0 5rem;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.hero-meta-kicker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-tag {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+.hero-col-number {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--accent-vermilion);
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.4rem, 4.5vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.hero-author {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  margin-bottom: 1.75rem;
+}
+
+.hero-quote {
+  font-family: var(--font-editorial);
+  font-size: 1.25rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text-primary);
+  border-left: 2px solid var(--accent-vermilion);
+  padding-left: 1.5rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.hero-specs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 2.25rem;
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.spec-label {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.spec-value {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1rem 1.8rem;
+  border: 1px solid var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-vermilion);
+  border-color: var(--accent-vermilion);
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background-color: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1rem 1.8rem;
+  border: 1px solid var(--border-dark);
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+/* Mockup 3D Hero */
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1200px;
+}
+
+.hero-book-3d {
+  width: 320px;
+  height: 480px;
+  transform: rotateY(-18deg) rotateX(8deg);
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+  box-shadow: var(--shadow-book);
+  cursor: pointer;
+  position: relative;
+}
+
+.hero-book-3d:hover {
+  transform: rotateY(-6deg) rotateX(3deg) translateY(-8px);
+  box-shadow: -16px 24px 44px rgba(0, 0, 0, 0.28);
+}
+
+.hero-book-3d svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================================================================
+   Barra de Filtros y Control de Retícula (Catalog Controls Bar)
+   ========================================================================== */
+.catalog-controls {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 80;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.85rem 0;
+  transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
+}
+
+.controls-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Pestañas de Colección */
+.filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.filter-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-tab {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.filter-tab span.count {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.filter-tab:hover {
+  border-color: var(--border-dark);
+  color: var(--text-primary);
+}
+
+.filter-tab.active {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+.filter-tab.active span.count {
+  color: var(--bg-primary);
+  opacity: 0.7;
+}
+
+/* Herramientas derechas (Búsqueda, Orden, Layout) */
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-box-inline {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  padding: 0.45rem 0.85rem 0.45rem 2.2rem;
+  width: 200px;
+  transition: all var(--transition-fast);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--border-dark);
+  width: 260px;
+  background-color: var(--bg-primary);
+}
+
+.search-icon-inline {
+  position: absolute;
+  left: 0.7rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.sort-select {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--border-dark);
+}
+
+/* Botones de Layout (Grid 3 cols, Dense 4 cols, Index/Table) */
+.layout-switchers {
+  display: flex;
+  border: 1px solid var(--border-color);
+}
+
+.layout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 34px;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  border-right: 1px solid var(--border-color);
+}
+
+.layout-btn:last-child {
+  border-right: none;
+}
+
+.layout-btn:hover {
+  color: var(--text-primary);
+}
+
+.layout-btn.active {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+/* ==========================================================================
+   Contador de Resultados y Estado de Filtro
+   ========================================================================== */
+.catalog-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0 1rem;
+  border-bottom: 1px solid var(--border-light);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.catalog-status-bar strong {
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Grid del Catálogo (Modo Cuadrícula Pentagram)
+   ========================================================================== */
+.catalog-section {
+  padding-bottom: 6rem;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  padding-top: 2rem;
+  transition: all var(--transition-smooth);
+}
+
+/* Modo 4 columnas (Compact) */
+.books-grid.layout-dense {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.75rem;
+}
+
+/* Tarjeta de Libro */
+.book-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform var(--transition-smooth);
+}
+
+.book-card-cover-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 440 / 660;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-subtle);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.book-card-cover-wrap svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.book-card:hover .book-card-cover-wrap {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.book-card:hover .book-card-cover-wrap svg {
+  transform: scale(1.02);
+}
+
+/* Badge de estado (Novedad, Esencial) */
+.book-badge-corner {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  z-index: 10;
+}
+
+/* Botón flotante Wishlist */
+.book-bookmark-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: all var(--transition-fast);
+}
+
+.book-card:hover .book-bookmark-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.book-bookmark-btn.saved {
+  background-color: var(--accent-vermilion);
+  color: #FFFFFF;
+  border-color: var(--accent-vermilion);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Acciones Hover superpuestas */
+.book-hover-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+  padding: 2rem 1.25rem 1.25rem;
+  display: flex;
+  gap: 0.5rem;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  z-index: 15;
+}
+
+.book-card:hover .book-hover-actions {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.hover-btn {
+  flex: 1;
+  background-color: #FFFFFF;
+  color: #0A0A0A;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: all var(--transition-fast);
+}
+
+.hover-btn:hover {
+  background-color: var(--accent-vermilion);
+  color: #FFFFFF;
+}
+
+.hover-btn.btn-cart-quick {
+  background-color: #0A0A0A;
+  color: #FFFFFF;
+  border: 1px solid #333333;
+}
+
+.hover-btn.btn-cart-quick:hover {
+  background-color: var(--accent-vermilion);
+  border-color: var(--accent-vermilion);
+}
+
+/* Información de la Tarjeta */
+.book-card-info {
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.book-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.book-card-title:hover {
+  color: var(--accent-vermilion);
+}
+
+.book-card-author {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+}
+
+.book-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border-light);
+  font-family: var(--font-heading);
+}
+
+.book-card-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.book-card-btn-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: color var(--transition-fast);
+}
+
+.book-card-btn-text:hover {
+  color: var(--accent-vermilion);
+}
+
+/* ==========================================================================
+   Modo Archivo / Tabla de Índice (Pentagram Index/Archive View)
+   ========================================================================== */
+.books-index-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.books-index-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-heading);
+}
+
+.books-index-table th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.9rem 1rem;
+  border-bottom: 2px solid var(--border-dark);
+  background-color: var(--bg-primary);
+  position: sticky;
+  top: calc(var(--header-height) + 52px);
+  z-index: 10;
+}
+
+.books-index-table td {
+  padding: 1.1rem 1rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  vertical-align: middle;
+  transition: background-color var(--transition-fast);
+}
+
+.books-index-table tbody tr {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.books-index-table tbody tr:hover td {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.table-title-cell {
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.table-thumb {
+  width: 38px;
+  height: 57px;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.table-thumb svg {
+  width: 100%;
+  height: 100%;
+}
+
+.table-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  margin-left: 0.5rem;
+}
+
+.table-price {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.table-action-btn {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.table-action-btn:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+/* ==========================================================================
+   Sección Manifiesto Editorial (Filosofía Pentagram)
+   ========================================================================== */
+.editorial-manifesto {
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 6rem 0;
+}
+
+.manifesto-lead {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin-bottom: 4rem;
+  max-width: 1100px;
+}
+
+.manifesto-lead span {
+  color: var(--accent-vermilion);
+}
+
+.manifesto-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3.5rem;
+}
+
+.manifesto-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.manifesto-num {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-vermilion);
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+
+.manifesto-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.manifesto-p {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Panel Lateral / Cajón de Detalle de Libro (Book Detail Drawer)
+   ========================================================================== */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-overlay);
+  backdrop-filter: blur(4px);
+  z-index: 150;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-smooth), visibility var(--transition-smooth);
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.book-detail-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(850px, 95vw);
+  background-color: var(--bg-drawer);
+  z-index: 160;
+  transform: translateX(100%);
+  transition: transform var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
+}
+
+.book-detail-drawer.active {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-drawer);
+}
+
+.drawer-header-meta {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.drawer-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.drawer-close-btn:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.5rem 2.5rem 4rem;
+}
+
+.drawer-book-presentation {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.drawer-cover-wrap {
+  width: 100%;
+  box-shadow: var(--shadow-book);
+  border: 1px solid var(--border-color);
+}
+
+.drawer-cover-wrap svg {
+  width: 100%;
+  height: auto;
+}
+
+.drawer-primary-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-tag {
+  align-self: flex-start;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  padding: 3px 8px;
+  margin-bottom: 0.75rem;
+}
+
+.drawer-book-title {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.drawer-book-author {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.drawer-book-price {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.drawer-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.btn-drawer-cart {
+  width: 100%;
+  padding: 1rem;
+}
+
+.btn-drawer-reader {
+  width: 100%;
+  padding: 0.85rem;
+}
+
+.drawer-quote {
+  font-family: var(--font-editorial);
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.6;
+  border-left: 2px solid var(--accent-vermilion);
+  padding-left: 1.5rem;
+  margin: 2.5rem 0;
+  color: var(--text-primary);
+}
+
+.drawer-section-title {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.6rem;
+  margin: 2rem 0 1.25rem;
+}
+
+.drawer-synopsis-p {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Ficha Técnica / Colofón Pentagram */
+.drawer-colophon-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.colophon-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.colophon-label {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.colophon-val {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Modal Visor de Lectura (Reading Sample Experience)
+   ========================================================================== */
+.reader-modal {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-primary);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-smooth), visibility var(--transition-smooth);
+}
+
+.reader-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.reader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  font-family: var(--font-heading);
+}
+
+.reader-book-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reader-title-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.reader-author-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.reader-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reader-font-toggle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.reader-font-toggle.active {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.reader-progress-bar {
+  height: 3px;
+  background-color: var(--border-color);
+  width: 100%;
+}
+
+.reader-progress-fill {
+  height: 100%;
+  background-color: var(--accent-vermilion);
+  width: 0%;
+  transition: width 0.1s ease;
+}
+
+.reader-content-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4rem 2rem 6rem;
+}
+
+.reader-article {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.reader-chapter-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.reader-paragraphs {
+  font-family: var(--font-editorial);
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.reader-paragraphs.font-sans {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.reader-paragraphs p {
+  margin-bottom: 1.75rem;
+  text-indent: 1.75rem;
+}
+
+.reader-paragraphs p:first-of-type {
+  text-indent: 0;
+}
+
+.reader-paragraphs p:first-of-type::first-letter {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.8rem;
+  margin-top: 0.2rem;
+  color: var(--accent-vermilion);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Cajón de la Cesta de Compra (Shopping Bag Drawer)
+   ========================================================================== */
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 95vw);
+  background-color: var(--bg-drawer);
+  z-index: 180;
+  transform: translateX(100%);
+  transition: transform var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
+}
+
+.cart-drawer.active {
+  transform: translateX(0);
+}
+
+.cart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid var(--border-color);
+  font-family: var(--font-heading);
+}
+
+.cart-header h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cart-items-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cart-empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+}
+
+.cart-empty-state p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cart-item-thumb {
+  width: 60px;
+  height: 90px;
+  border: 1px solid var(--border-color);
+}
+
+.cart-item-thumb svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cart-item-details h4 {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.cart-item-details p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.cart-item-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+}
+
+.qty-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-btn:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.qty-count {
+  padding: 0 8px;
+  font-weight: 600;
+}
+
+.cart-item-price-col {
+  text-align: right;
+  font-family: var(--font-heading);
+}
+
+.cart-item-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cart-item-remove {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-decoration: underline;
+  margin-top: 0.4rem;
+}
+
+.cart-item-remove:hover {
+  color: var(--accent-vermilion);
+}
+
+.cart-footer {
+  padding: 1.5rem 1.75rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  font-family: var(--font-heading);
+}
+
+.cart-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.cart-shipping-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.btn-checkout {
+  width: 100%;
+}
+
+/* ==========================================================================
+   Búsqueda Instantánea Modal
+   ========================================================================== */
+.search-modal {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-overlay);
+  backdrop-filter: blur(8px);
+  z-index: 190;
+  display: flex;
+  justify-content: center;
+  padding-top: 10vh;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+}
+
+.search-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.search-modal-card {
+  width: min(680px, 92vw);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-elevated);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-modal-header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.search-modal-input {
+  flex: 1;
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.search-modal-input:focus {
+  outline: none;
+}
+
+.search-results-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.search-result-row:hover {
+  background-color: var(--bg-secondary);
+}
+
+.search-result-info h4 {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.search-result-info p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Pie de Página (Footer Pentagram Colophon)
+   ========================================================================== */
+.site-footer {
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  padding: 5rem 0 3rem;
+  font-family: var(--font-heading);
+}
+
+.footer-top-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 3.5rem;
+  margin-bottom: 4rem;
+}
+
+.footer-col h4 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+}
+
+.footer-manifesto-snippet {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 440px;
+  margin-bottom: 1.5rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-links a {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.footer-links a:hover {
+  color: var(--text-primary);
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.newsletter-input-group {
+  display: flex;
+}
+
+.newsletter-input {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  padding: 0.75rem 1rem;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--border-dark);
+}
+
+.btn-newsletter {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 1.25rem;
+}
+
+.newsletter-legal {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Horas Internacionales Pentagram (Clocks) */
+.footer-clocks-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 2rem;
+}
+
+.clock-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+}
+
+.clock-city {
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.clock-time {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* Barra inferior del Footer */
+.footer-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* ==========================================================================
+   Notificación Toast de Feedback
+   ========================================================================== */
+.toast-notice {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.85rem 1.4rem;
+  border-radius: 0;
+  box-shadow: var(--shadow-elevated);
+  z-index: 300;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all var(--transition-fast);
+}
+
+.toast-notice.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .hero-visual {
+    order: -1;
+  }
+  .books-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .books-grid.layout-dense {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .footer-top-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --container-pad: 20px;
+    --header-height: 64px;
+  }
+  .nav-menu {
+    display: none;
+  }
+  .mobile-toggle {
+    display: inline-flex;
+  }
+  .books-grid, .books-grid.layout-dense {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .manifesto-columns {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .drawer-book-presentation {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .drawer-cover-wrap {
+    max-width: 240px;
+    margin: 0 auto;
+  }
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .search-input {
+    width: 140px;
+  }
+  .search-input:focus {
+    width: 180px;
+  }
+  .hero-book-3d {
+    width: 240px;
+    height: 360px;
+  }
+}
