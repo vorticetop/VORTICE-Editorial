@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   updateWishlistUI();
   startInternationalClocks();
+  PayPalService.init();
 });
 
 /* ==========================================================================
@@ -605,10 +606,19 @@ function updateCartUI() {
   const countHeader = document.getElementById('cart-items-count');
   const listContainer = document.getElementById('cart-items-list');
   const subtotalDisplay = document.getElementById('cart-subtotal-val');
+  const shippingDisplay = document.getElementById('cart-shipping-val');
   const totalDisplay = document.getElementById('cart-total-val');
+  const fallbackTotalDisplay = document.getElementById('cart-fallback-total');
+  const shippingNote = document.getElementById('cart-shipping-note');
+  const shippingFill = document.getElementById('shipping-bar-fill');
+  const checkoutMethods = document.querySelector('.checkout-methods-wrapper');
 
   const totalItems = AppState.cart.reduce((sum, item) => sum + item.qty, 0);
   const subtotal = AppState.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const freeShippingThreshold = 40.00;
+  const isFreeShipping = subtotal >= freeShippingThreshold;
+  const shippingCost = (subtotal === 0 || isFreeShipping) ? 0 : 3.50;
+  const grandTotal = subtotal + shippingCost;
 
   if (countBadge) {
     countBadge.textContent = totalItems;
@@ -620,7 +630,33 @@ function updateCartUI() {
   }
 
   if (subtotalDisplay) subtotalDisplay.textContent = `${subtotal.toFixed(2)} €`;
-  if (totalDisplay) totalDisplay.textContent = `${subtotal.toFixed(2)} €`;
+  if (shippingDisplay) {
+    shippingDisplay.textContent = subtotal === 0 ? '0.00 €' : (isFreeShipping ? 'Gratis' : `${shippingCost.toFixed(2)} €`);
+    shippingDisplay.style.color = isFreeShipping && subtotal > 0 ? 'var(--accent-emerald)' : 'inherit';
+  }
+  if (totalDisplay) totalDisplay.textContent = `${grandTotal.toFixed(2)} €`;
+  if (fallbackTotalDisplay) fallbackTotalDisplay.textContent = `${grandTotal.toFixed(2)} €`;
+
+  // Barra de progreso hacia el envío gratuito
+  if (shippingFill) {
+    const progress = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+    shippingFill.style.width = `${progress}%`;
+  }
+
+  if (shippingNote) {
+    if (subtotal === 0) {
+      shippingNote.textContent = 'Envío gratuito a España peninsular a partir de 40.00 €';
+    } else if (isFreeShipping) {
+      shippingNote.innerHTML = '<strong>¡Envío gratuito conseguido!</strong> Sin gastos adicionales de transporte.';
+    } else {
+      const remaining = (freeShippingThreshold - subtotal).toFixed(2);
+      shippingNote.innerHTML = `Añade <strong>${remaining} €</strong> más para conseguir <strong>Envío Gratuito</strong>.`;
+    }
+  }
+
+  if (checkoutMethods) {
+    checkoutMethods.style.display = totalItems > 0 ? 'flex' : 'none';
+  }
 
   if (!listContainer) return;
 
@@ -652,9 +688,9 @@ function updateCartUI() {
           <h4>${item.title}</h4>
           <p>${item.author}</p>
           <div class="cart-item-qty">
-            <button class="qty-btn" onclick="updateCartQty('${item.id}', -1)">-</button>
+            <button class="qty-btn" onclick="updateCartQty('${item.id}', -1)" aria-label="Disminuir">-</button>
             <span class="qty-count">${item.qty}</span>
-            <button class="qty-btn" onclick="updateCartQty('${item.id}', 1)">+</button>
+            <button class="qty-btn" onclick="updateCartQty('${item.id}', 1)" aria-label="Aumentar">+</button>
           </div>
         </div>
         <div class="cart-item-price-col">
@@ -672,6 +708,11 @@ function openCart() {
   if (drawer) drawer.classList.add('active');
   if (backdrop) backdrop.classList.add('active');
   document.body.style.overflow = 'hidden';
+
+  // Si PayPal no se había renderizado aún y hay artículos, intentar renderizar
+  if (window.paypal && window.paypal.Buttons && !PayPalService.isRendered) {
+    PayPalService.renderButtons();
+  }
 }
 
 function closeCart() {
@@ -684,19 +725,369 @@ function closeCart() {
   }
 }
 
+/* ==========================================================================
+   Pasarela Oficial de Pago: PayPal Buttons SDK & Checkout
+   ========================================================================== */
+
+const PayPalService = {
+  clientId: localStorage.getItem('vortice-paypal-client-id') || 'test',
+  isRendered: false,
+
+  init() {
+    this.updateConfigLabel();
+    this.mountButtonsWhenReady();
+  },
+
+  updateConfigLabel() {
+    const label = document.getElementById('paypal-client-label');
+    if (!label) return;
+    if (this.clientId === 'test') {
+      label.textContent = 'PayPal Sandbox (test)';
+    } else {
+      label.textContent = `PayPal Configurado (${this.clientId.substring(0, 7)}...)`;
+    }
+    const input = document.getElementById('paypal-client-id-input');
+    if (input) input.value = this.clientId;
+  },
+
+  mountButtonsWhenReady() {
+    if (window.paypal && window.paypal.Buttons) {
+      this.renderButtons();
+    } else {
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        if (window.paypal && window.paypal.Buttons) {
+          clearInterval(interval);
+          this.renderButtons();
+        } else if (attempts > 10) {
+          clearInterval(interval);
+          this.showFallback();
+        }
+      }, 400);
+    }
+  },
+
+  renderButtons() {
+    const container = document.getElementById('paypal-button-container');
+    const fallback = document.getElementById('paypal-fallback-container');
+    if (!container) return;
+
+    // Limpiar contenedor para evitar duplicados en re-render
+    container.innerHTML = '';
+
+    try {
+      window.paypal.Buttons({
+        style: {
+          layout: 'vertical',
+          color: 'black',
+          shape: 'rect',
+          label: 'paypal',
+          height: 44
+        },
+        createOrder: (data, actions) => {
+          if (AppState.cart.length === 0) {
+            showToast('Tu cesta está vacía');
+            return actions.reject();
+          }
+
+          const subtotal = AppState.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+          const shipping = subtotal >= 40 ? 0 : 3.50;
+          const total = subtotal + shipping;
+
+          return actions.order.create({
+            intent: 'CAPTURE',
+            purchase_units: [{
+              reference_id: 'VOR-' + Date.now(),
+              description: 'Pedido Editorial Vórtice',
+              amount: {
+                currency_code: 'EUR',
+                value: total.toFixed(2),
+                breakdown: {
+                  item_total: {
+                    currency_code: 'EUR',
+                    value: subtotal.toFixed(2)
+                  },
+                  shipping: {
+                    currency_code: 'EUR',
+                    value: shipping.toFixed(2)
+                  }
+                }
+              },
+              items: AppState.cart.map(item => ({
+                name: (item.title || 'Libro Vórtice').substring(0, 120),
+                unit_amount: {
+                  currency_code: 'EUR',
+                  value: Number(item.price).toFixed(2)
+                },
+                quantity: String(item.qty),
+                category: 'PHYSICAL_GOODS'
+              }))
+            }],
+            application_context: {
+              brand_name: 'EDITORIAL VÓRTICE',
+              shipping_preference: 'GET_FROM_FILE',
+              user_action: 'PAY_NOW'
+            }
+          });
+        },
+        onApprove: (data, actions) => {
+          showToast('Verificando y capturando orden con PayPal...');
+          return actions.order.capture().then((orderData) => {
+            handleOrderSuccess(orderData);
+          }).catch(err => {
+            console.error('Error al capturar orden PayPal:', err);
+            showToast('Error al capturar el cobro en PayPal');
+          });
+        },
+        onCancel: () => {
+          showToast('Pago cancelado en PayPal.');
+        },
+        onError: (err) => {
+          console.error('Error en PayPal Buttons SDK:', err);
+          this.showFallback('Error de conexión con la pasarela de PayPal.');
+        }
+      }).render('#paypal-button-container');
+
+      this.isRendered = true;
+      if (fallback) fallback.style.display = 'none';
+    } catch (e) {
+      console.warn('Excepción al renderizar PayPal Buttons:', e);
+      this.showFallback();
+    }
+  },
+
+  showFallback(msg) {
+    const fallback = document.getElementById('paypal-fallback-container');
+    if (fallback) fallback.style.display = 'block';
+    if (msg) showToast(msg);
+  },
+
+  reloadSDKWithClientId(newClientId) {
+    this.clientId = newClientId.trim() || 'test';
+    localStorage.setItem('vortice-paypal-client-id', this.clientId);
+    this.updateConfigLabel();
+    this.isRendered = false;
+
+    const oldScript = document.getElementById('paypal-sdk-script');
+    if (oldScript) oldScript.remove();
+
+    showToast('Actualizando pasarela de PayPal...');
+
+    const newScript = document.createElement('script');
+    newScript.id = 'paypal-sdk-script';
+    newScript.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(this.clientId)}&currency=EUR&locale=es_ES&components=buttons`;
+    newScript.async = true;
+    newScript.onload = () => {
+      this.renderButtons();
+      showToast('Pasarela PayPal actualizada con éxito');
+    };
+    newScript.onerror = () => {
+      showToast('No se pudo inicializar con ese Client ID. Verifica que sea correcto.');
+      this.showFallback();
+    };
+    document.head.appendChild(newScript);
+  }
+};
+
+/* ==========================================================================
+   Checkout Alternativo / Simulado & Confirmación de Pedidos
+   ========================================================================== */
+
 function checkout() {
   if (AppState.cart.length === 0) {
     showToast('Tu cesta está vacía');
     return;
   }
-  showToast('Iniciando pasarela de pago segura...');
+  // Si la pasarela oficial está cargada, enfocarla
+  const paypalContainer = document.getElementById('paypal-button-container');
+  if (paypalContainer && paypalContainer.children.length > 0) {
+    paypalContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    showToast('Completa el pago seleccionando tu opción de PayPal o Tarjeta');
+  } else {
+    simulateCheckout();
+  }
+}
+
+function simulateCheckout() {
+  if (AppState.cart.length === 0) {
+    showToast('Tu cesta está vacía');
+    return;
+  }
+
+  showToast('Iniciando cobro seguro con pasarela...');
   setTimeout(() => {
-    alert('Simulación de Pedido Vórtice: Gracias por apoyar la edición independiente de libros.');
-    AppState.cart = [];
-    saveCart();
-    updateCartUI();
-    closeCart();
-  }, 1000);
+    const mockOrderData = {
+      id: 'PAYPAL-TEST-' + Math.random().toString(36).substring(2, 10).toUpperCase(),
+      status: 'COMPLETED',
+      payer: {
+        name: { given_name: 'Lector', surname: 'Vórtice' },
+        email_address: 'lector@vortice-editorial.es'
+      }
+    };
+    handleOrderSuccess(mockOrderData);
+  }, 900);
+}
+
+function handleOrderSuccess(orderData) {
+  const subtotal = AppState.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const shipping = subtotal >= 40 ? 0 : 3.50;
+  const grandTotal = subtotal + shipping;
+
+  const orderRecord = {
+    orderRef: 'VOR-2026-' + Math.floor(100000 + Math.random() * 900000),
+    paypalTransactionId: orderData.id || 'N/A',
+    date: new Date().toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }),
+    payerName: orderData.payer?.name?.given_name
+      ? `${orderData.payer.name.given_name} ${orderData.payer.name.surname || ''}`.trim()
+      : 'Lector Vórtice',
+    payerEmail: orderData.payer?.email_address || 'lector@vortice.es',
+    items: JSON.parse(JSON.stringify(AppState.cart)),
+    subtotal: subtotal,
+    shipping: shipping,
+    total: grandTotal
+  };
+
+  // Guardar en almacenamiento de pedidos
+  const history = JSON.parse(localStorage.getItem('vortice-orders') || '[]');
+  history.unshift(orderRecord);
+  localStorage.setItem('vortice-orders', JSON.stringify(history));
+
+  // Vaciar cesta y actualizar UI
+  AppState.cart = [];
+  saveCart();
+  updateCartUI();
+  closeCart();
+
+  // Mostrar modal de confirmación con el justificante
+  renderOrderReceipt(orderRecord);
+  openOrderModal();
+  showToast('¡Pago procesado con éxito! Pedido confirmado.');
+}
+
+function renderOrderReceipt(order) {
+  const body = document.getElementById('order-modal-body');
+  if (!body) return;
+
+  body.innerHTML = `
+    <div class="order-meta-grid">
+      <div class="order-meta-col">
+        <span class="order-meta-label">Nº de Pedido</span>
+        <span class="order-meta-value">${order.orderRef}</span>
+      </div>
+      <div class="order-meta-col">
+        <span class="order-meta-label">ID Transacción PayPal</span>
+        <span class="order-meta-value">${order.paypalTransactionId}</span>
+      </div>
+      <div class="order-meta-col">
+        <span class="order-meta-label">Fecha y Hora</span>
+        <span class="order-meta-value">${order.date}</span>
+      </div>
+      <div class="order-meta-col">
+        <span class="order-meta-label">Comprador</span>
+        <span class="order-meta-value">${order.payerName}</span>
+      </div>
+    </div>
+
+    <table class="order-items-table">
+      <thead>
+        <tr>
+          <th>Ejemplar</th>
+          <th class="text-right">Cant.</th>
+          <th class="text-right">Precio Unit.</th>
+          <th class="text-right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${order.items.map(item => `
+          <tr>
+            <td>
+              <strong>${item.title}</strong><br>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">${item.author || ''}</span>
+            </td>
+            <td class="text-right">${item.qty}</td>
+            <td class="text-right">${item.price.toFixed(2)} €</td>
+            <td class="text-right">${(item.price * item.qty).toFixed(2)} €</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="order-summary-box">
+      <div class="order-summary-line">
+        <span>Base Imponible / Subtotal:</span>
+        <span>${order.subtotal.toFixed(2)} €</span>
+      </div>
+      <div class="order-summary-line">
+        <span>Gastos de Envío:</span>
+        <span>${order.shipping === 0 ? 'Gratis (Promoción +40€)' : `${order.shipping.toFixed(2)} €`}</span>
+      </div>
+      <div class="order-summary-line order-summary-total">
+        <span>Total Abonado (EUR):</span>
+        <span>${order.total.toFixed(2)} €</span>
+      </div>
+    </div>
+
+    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-top: 1rem;">
+      * Se ha remitido el justificante electrónico a <strong>${order.payerEmail}</strong>. El paquete se preparará con encuadernación artesanal y entrega estimada en 48-72h.
+    </p>
+  `;
+}
+
+function openOrderModal() {
+  const modal = document.getElementById('order-modal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeOrderModal() {
+  const modal = document.getElementById('order-modal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function openPayPalConfigModal() {
+  const modal = document.getElementById('paypal-config-modal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    const input = document.getElementById('paypal-client-id-input');
+    if (input) input.value = PayPalService.clientId;
+  }
+}
+
+function closePayPalConfigModal() {
+  const modal = document.getElementById('paypal-config-modal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function setPayPalPreset(preset) {
+  const input = document.getElementById('paypal-client-id-input');
+  if (input) input.value = preset;
+}
+
+function savePayPalSettings() {
+  const input = document.getElementById('paypal-client-id-input');
+  const newId = input ? input.value.trim() : '';
+  if (!newId) {
+    showToast('Por favor introduce un Client ID válido');
+    return;
+  }
+  PayPalService.reloadSDKWithClientId(newId);
+  closePayPalConfigModal();
 }
 
 /* ==========================================================================
@@ -869,6 +1260,8 @@ function initEventListeners() {
       closeCart();
       closeReader();
       closeSearchModal();
+      closeOrderModal();
+      closePayPalConfigModal();
     }
     // Atajo CMD+K o CTRL+K para búsqueda
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
