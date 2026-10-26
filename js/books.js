@@ -32,7 +32,10 @@ const BOOKS_DATA = [
     sampleChapter: {
       chapterTitle: "Capítulo I: El umbral de las tres frecuencias",
       content: [
-        `<div style="position:relative;padding-top:max(60%,324px);width:100%;height:0;"><iframe style="position:absolute;border:none;width:100%;height:100%;left:0;top:0;" src="https://online.fliphtml5.com/maximografico/ALBZ/" title="ALBZ" seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" ></iframe></div>`
+        "A las 04:17 de una noche de noviembre en la dársena norte, el rumor de los transformadores eléctricos desciende a una vibración apenas perceptible de 43 hercios. En ese estrecho intervalo —antes de que el primer convoy de mercancías active los sensores de la terminal férrea— la ciudad revela su esqueleto acústico.",
+        "Nos hemos habituado a concebir el espacio público como una composición estrictamente visual: fachadas, pavimentos, alineaciones de arbolado y luminarias que marcan los ejes de circulación. Sin embargo, toda arquitectura es primariamente un resonador. Los muros no solo contienen cuerpos; refractan, absorben o multiplican el sonido del tránsito humano.",
+        "Cuando una comunidad pierde el control sobre su paisaje sonoro, no solo experimenta una degradación sensorial; pierde la facultad de distinguir la voz propia de la consigna ajena. La polución acústica contemporánea no es un mero subproducto industrial: es una técnica de saturación que imposibilita la pausa reflexiva.",
+        "En las páginas que siguen, recorreremos doce enclaves donde el silencio aún opera como un acto de resistencia calculada."
       ]
     }
   },
