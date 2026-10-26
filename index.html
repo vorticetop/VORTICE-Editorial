@@ -106,9 +106,10 @@
           </button>
 
           <!-- Botón de Menú Móvil (Hamburger) -->
-          <button class="action-btn mobile-menu-toggle" id="btn-mobile-menu" onclick="toggleMobileMenu()" title="Abrir menú"
-            aria-label="Abrir menú de navegación" aria-expanded="false">
-            <svg id="mobile-menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="action-btn mobile-menu-toggle" id="btn-mobile-menu" onclick="toggleMobileMenu()"
+            title="Abrir menú" aria-label="Abrir menú de navegación" aria-expanded="false">
+            <svg id="mobile-menu-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -199,7 +200,7 @@
 
           <!-- Modos de Disposición (3 cols, 4 cols compacta, tabla índice) -->
           <div class="layout-switchers" role="group" aria-label="Modo de visualización">
-            <button class="layout-btn active" data-layout="grid" onclick="setLayout('grid')"
+            <button class="layout-btn " data-layout="grid" onclick="setLayout('grid')"
               title="Retícula Visual (3 Columnas)" aria-label="Retícula estándar">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -208,7 +209,7 @@
                 <rect x="3" y="14" width="7" height="7"></rect>
               </svg>
             </button>
-            <button class="layout-btn" data-layout="dense" onclick="setLayout('dense')"
+            <button class="layout-btn active" data-layout="dense" onclick="setLayout('dense')"
               title="Retícula Compacta (4 Columnas)" aria-label="Retícula compacta">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="2" y="2" width="4" height="4"></rect>
