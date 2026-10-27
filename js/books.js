@@ -1,5 +1,6 @@
+/* cspell:disable */
 // Catálogo de Libros - Editorial Vórtice (Estilo Pentagram)
-const BOOKS_DATA = [
+const INITIAL_BOOKS_DATA = [
   {
     id: "vortice-01",
     title: "ALBZ",
@@ -466,8 +467,8 @@ const BOOKS_DATA = [
   }
 ];
 
-// Colecciones editoriales
-const COLLECTIONS_DATA = [
+// Colecciones editoriales base
+const INITIAL_COLLECTIONS_DATA = [
   { id: "all", name: "Catálogo Completo", count: 12 },
   { id: "cultura", name: "Cultura", count: 3, code: "COL-01", description: "Ensayos sobre estética, pensamiento político y fenomenología contemporánea." },
   { id: "poesia", name: "Poesía", count: 2, code: "COL-02", description: "Morfología espacial, historia del diseño tipográfico y teoría constructiva." },
@@ -475,3 +476,77 @@ const COLLECTIONS_DATA = [
   { id: "moda", name: "Moda", count: 2, code: "COL-04", description: "Voces poéticas radicales, apropiaciones textuales y sonoridades mínimas." },
   { id: "tendencias", name: "Tendencias", count: 2, code: "COL-05", description: "Cultura visual, crítica de la imagen técnica y nuevos medios sintéticos." }
 ];
+
+/* ==========================================================================
+   Gestor de Persistencia y Sincronización Reactiva
+   ========================================================================== */
+
+function loadStoredBooks() {
+  try {
+    const raw = localStorage.getItem('vortice-books');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (err) {
+    console.warn('Vórtice: Error al cargar libros de localStorage', err);
+  }
+  return JSON.parse(JSON.stringify(INITIAL_BOOKS_DATA));
+}
+
+function loadStoredCollections() {
+  try {
+    const raw = localStorage.getItem('vortice-collections');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (err) {
+    console.warn('Vórtice: Error al cargar colecciones de localStorage', err);
+  }
+  return JSON.parse(JSON.stringify(INITIAL_COLLECTIONS_DATA));
+}
+
+// Variables vivas en memoria
+let BOOKS_DATA = loadStoredBooks();
+let COLLECTIONS_DATA = loadStoredCollections();
+
+// Si nunca se había guardado, inicializar en localStorage para mantener coherencia
+if (!localStorage.getItem('vortice-books')) {
+  try {
+    localStorage.setItem('vortice-books', JSON.stringify(BOOKS_DATA));
+  } catch (e) {}
+}
+if (!localStorage.getItem('vortice-collections')) {
+  try {
+    localStorage.setItem('vortice-collections', JSON.stringify(COLLECTIONS_DATA));
+  } catch (e) {}
+}
+
+function saveBooksToStorage(books) {
+  BOOKS_DATA = books;
+  try {
+    localStorage.setItem('vortice-books', JSON.stringify(books));
+  } catch (err) {
+    console.error('Vórtice: Error al guardar libros en localStorage', err);
+  }
+}
+
+function saveCollectionsToStorage(collections) {
+  COLLECTIONS_DATA = collections;
+  try {
+    localStorage.setItem('vortice-collections', JSON.stringify(collections));
+  } catch (err) {
+    console.error('Vórtice: Error al guardar colecciones en localStorage', err);
+  }
+}
+
+function resetCatalogToDefault() {
+  BOOKS_DATA = JSON.parse(JSON.stringify(INITIAL_BOOKS_DATA));
+  COLLECTIONS_DATA = JSON.parse(JSON.stringify(INITIAL_COLLECTIONS_DATA));
+  try {
+    localStorage.setItem('vortice-books', JSON.stringify(BOOKS_DATA));
+    localStorage.setItem('vortice-collections', JSON.stringify(COLLECTIONS_DATA));
+  } catch (e) {}
+  return { books: BOOKS_DATA, collections: COLLECTIONS_DATA };
+}

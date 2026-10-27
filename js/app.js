@@ -1268,6 +1268,26 @@ function initEventListeners() {
       e.preventDefault();
       openSearchModal();
     }
+    // Atajo CTRL+SHIFT+A o CMD+SHIFT+A para panel editorial
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    }
+  });
+
+  // Sincronización reactiva entre pestañas con el Panel Admin
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'vortice-books' || e.key === 'vortice-collections') {
+      if (typeof loadStoredBooks === 'function') {
+        BOOKS_DATA = loadStoredBooks();
+      }
+      if (typeof loadStoredCollections === 'function') {
+        COLLECTIONS_DATA = loadStoredCollections();
+      }
+      renderHeroFeature();
+      renderCatalog();
+      renderFilterTabs();
+    }
   });
 
   // Newsletter submit

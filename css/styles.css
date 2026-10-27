@@ -597,6 +597,7 @@ button#btn-cart-trigger {
    Barra de Filtros y Control de Retícula (Catalog Controls Bar)
    ========================================================================== */
 .catalog-controls {
+  display: none;
   position: sticky;
   top: var(--header-height);
   z-index: 80;
@@ -2341,6 +2342,20 @@ button#btn-cart-trigger {
 .footer-bottom-links {
   display: flex;
   gap: 1.5rem;
+  align-items: center;
+}
+
+.footer-admin-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.footer-admin-link:hover {
+  color: var(--accent-vermilion);
 }
 
 /* ==========================================================================
