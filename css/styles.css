@@ -136,7 +136,7 @@ a {
   padding: 7px 0;
   overflow: hidden;
   white-space: nowrap;
-  display: none;
+  display: block;
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
   position: relative;

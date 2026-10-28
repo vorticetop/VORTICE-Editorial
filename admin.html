@@ -1,0 +1,799 @@
+<!-- cspell:disable -->
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VÓRTICE EDITORIAL — Consola de Gestión Editorial & Catálogo</title>
+  <meta name="description" content="Panel de administración y gestión editorial de Editorial Vórtice. Control de catálogo, portadas, pedidos y ajustes.">
+
+  <!-- Favicon SVG con glifo de Vórtice -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><path d='M50 20 L50 80 M20 50 L80 50 M29 29 L71 71 M29 71 L71 29' stroke='%23fff' stroke-width='8'/><circle cx='50' cy='50' r='10' fill='%23ff3300'/></svg>">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+
+  <!-- ==========================================================================
+       1. Gate de Autenticación / Control de Acceso Restringido
+       ========================================================================== -->
+  <section class="admin-auth-screen" id="admin-auth-gate" aria-label="Acceso al Panel Editorial">
+    <div class="admin-auth-card" id="admin-auth-card">
+      <div class="admin-auth-header">
+        <div class="admin-auth-logo">
+          <img src="img/logo-w.png" alt="Editorial Vórtice">
+        </div>
+        <div>
+          <span class="admin-auth-pill">Consola de Control · Dirección</span>
+          <h1 class="admin-auth-title">Panel Editorial Vórtice</h1>
+          <p class="admin-auth-desc">Acceso restringido para el equipo editorial, gestión de catálogo y expedición de pedidos.</p>
+        </div>
+      </div>
+
+      <form class="admin-auth-form" onsubmit="AdminApp.handleLogin(event)">
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="admin-password-input">Clave de Seguridad o PIN Master</label>
+          <input type="password" class="admin-form-input" id="admin-password-input" placeholder="Introduce la contraseña..." autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="admin-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Acceder al Panel
+        </button>
+      </form>
+
+      <div class="admin-auth-hints">
+        <span>Clave por defecto: <strong style="font-family:var(--font-mono); color:var(--text-primary);">vortice2026</strong> o <strong style="font-family:var(--font-mono); color:var(--text-primary);">admin</strong></span>
+        <button type="button" class="admin-auth-demo-btn" onclick="AdminApp.quickDemoLogin()">
+          ⚡ Entrar en Modo Demostración (1-Click)
+        </button>
+        <div style="text-align: center; margin-top: 0.5rem;">
+          <a href="index.html" style="color:var(--text-muted); font-size: 0.78rem; text-decoration: none;">← Volver al Catálogo Público</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       2. Shell Principal de la Consola Editorial (Visible tras login)
+       ========================================================================== -->
+  <div class="admin-shell" id="admin-dashboard-app" style="display: none;">
+
+    <!-- Barra Superior de Navegación -->
+    <header class="admin-topbar">
+      <div class="container">
+        <div class="admin-topbar-inner">
+          
+          <div class="admin-brand-group">
+            <a href="admin.html" style="display: flex; align-items: center;">
+              <img src="img/logo-w.png" alt="Editorial Vórtice">
+            </a>
+            <div class="admin-console-tag">
+              <span class="admin-status-dot"></span>
+              <span>Consola Activa · 2026</span>
+            </div>
+          </div>
+
+          <!-- Pestañas Principales -->
+          <nav class="admin-nav-tabs" role="tablist" aria-label="Secciones de Administración">
+            <button class="admin-tab-btn active" data-tab="dashboard" onclick="AdminApp.switchTab('dashboard')" role="tab">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              Panel General
+            </button>
+            <button class="admin-tab-btn" data-tab="catalog" onclick="AdminApp.switchTab('catalog')" role="tab">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              Catálogo de Libros <span class="badge-counter" id="badge-books-count">0</span>
+            </button>
+            <button class="admin-tab-btn" data-tab="orders" onclick="AdminApp.switchTab('orders')" role="tab">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              Gestión de Pedidos <span class="badge-counter" id="badge-orders-count">0</span>
+            </button>
+            <button class="admin-tab-btn" data-tab="collections" onclick="AdminApp.switchTab('collections')" role="tab">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+              Colecciones
+            </button>
+            <button class="admin-tab-btn" data-tab="settings" onclick="AdminApp.switchTab('settings')" role="tab">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              Ajustes
+            </button>
+          </nav>
+
+          <!-- Acciones Rápidas Superior -->
+          <div class="admin-topbar-actions">
+            <a href="index.html" target="_blank" class="admin-btn admin-btn-sm admin-btn-secondary" title="Abrir tienda en nueva pestaña">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              Ver Tienda
+            </a>
+            
+            <button class="admin-action-icon-btn" id="admin-btn-theme" onclick="AdminApp.toggleTheme()" title="Cambiar tema visual (claro / oscuro)">
+              <!-- Icono dinámico -->
+            </button>
+
+            <button class="admin-action-icon-btn danger" onclick="AdminApp.logout()" title="Cerrar Sesión">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido Dinámico de Pestañas -->
+    <main class="admin-main">
+      <div class="container">
+
+        <!-- ====================================================================
+             TAB 1: PANEL GENERAL (DASHBOARD & METRICAS)
+             ==================================================================== -->
+        <section class="admin-tab-pane active" id="tab-pane-dashboard">
+          <div class="admin-section-header">
+            <div class="admin-header-titles">
+              <h1>Consola de Control Editorial</h1>
+              <p>Métricas consolidadas de facturación, títulos en tirada, rotación y volumen de expedición 2026.</p>
+            </div>
+            <div class="admin-header-actions">
+              <button class="admin-btn admin-btn-sm" onclick="AdminApp.openNewBookModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nuevo Libro
+              </button>
+              <button class="admin-btn admin-btn-sm admin-btn-secondary" onclick="AdminApp.exportFullBackup()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Backup JSON
+              </button>
+            </div>
+          </div>
+
+          <!-- Cuadrícula de KPIs -->
+          <div class="admin-kpi-grid">
+            <div class="admin-kpi-card">
+              <div class="admin-kpi-top">
+                <span class="admin-kpi-label">Facturación Acumulada</span>
+                <span class="admin-kpi-icon">💶</span>
+              </div>
+              <div class="admin-kpi-value" id="kpi-total-revenue">0,00 €</div>
+              <div class="admin-kpi-subtext">
+                <span class="admin-kpi-trend">+18.4%</span> vs mes anterior
+              </div>
+            </div>
+
+            <div class="admin-kpi-card">
+              <div class="admin-kpi-top">
+                <span class="admin-kpi-label">Pedidos Registrados</span>
+                <span class="admin-kpi-icon">📦</span>
+              </div>
+              <div class="admin-kpi-value" id="kpi-total-orders">0</div>
+              <div class="admin-kpi-subtext">Transacciones en firme procesadas</div>
+            </div>
+
+            <div class="admin-kpi-card">
+              <div class="admin-kpi-top">
+                <span class="admin-kpi-label">Títulos en Catálogo</span>
+                <span class="admin-kpi-icon">📚</span>
+              </div>
+              <div class="admin-kpi-value" id="kpi-total-books">0</div>
+              <div class="admin-kpi-subtext">Ediciones activas con stock</div>
+            </div>
+
+            <div class="admin-kpi-card">
+              <div class="admin-kpi-top">
+                <span class="admin-kpi-label">Ticket Promedio</span>
+                <span class="admin-kpi-icon">📈</span>
+              </div>
+              <div class="admin-kpi-value" id="kpi-avg-ticket">0,00 €</div>
+              <div class="admin-kpi-subtext">Media por compra confirmada</div>
+            </div>
+          </div>
+
+          <!-- Paneles Analíticos Secundarios -->
+          <div class="admin-analytics-grid">
+            <!-- Gráfico de Colecciones -->
+            <div class="admin-card">
+              <div class="admin-card-title">
+                <span>Distribución por Colección Editorial</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">Peso relativo en catálogo</span>
+              </div>
+              <div class="admin-collection-bars" id="dashboard-collection-bars">
+                <!-- Barras inyectadas por renderCollectionDistributionBars() -->
+              </div>
+            </div>
+
+            <!-- Últimos Pedidos de la Editorial -->
+            <div class="admin-card" style="display: flex; flex-direction: column;">
+              <div class="admin-card-title">
+                <span>Últimas Expediciones</span>
+                <button class="admin-btn admin-btn-sm admin-btn-secondary" onclick="AdminApp.switchTab('orders')">Ver Todos</button>
+              </div>
+              <div style="overflow-x: auto; flex: 1;">
+                <table class="admin-table" style="font-size: 0.8rem;">
+                  <thead>
+                    <tr>
+                      <th>Ref.</th>
+                      <th>Fecha</th>
+                      <th>Comprador</th>
+                      <th>Total</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-recent-orders-tbody">
+                    <!-- Filas inyectadas -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             TAB 2: CATÁLOGO DE LIBROS (CRUD COMPLETO)
+             ==================================================================== -->
+        <section class="admin-tab-pane" id="tab-pane-catalog">
+          <div class="admin-section-header">
+            <div class="admin-header-titles">
+              <h1>Gestor de Catálogo General</h1>
+              <p>Altas, modificaciones, duplicación de fichas editoriales, generación de portadas y control de stock.</p>
+            </div>
+            <div class="admin-header-actions">
+              <button class="admin-btn" onclick="AdminApp.openNewBookModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Añadir Nuevo Libro
+              </button>
+              <button class="admin-btn admin-btn-secondary" onclick="AdminApp.exportFullBackup()" title="Descargar catálogo en archivo JSON">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar JSON
+              </button>
+              <button class="admin-btn admin-btn-secondary" onclick="AdminApp.triggerImportBackup()" title="Importar catálogo o copia de respaldo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Importar JSON
+              </button>
+              <button class="admin-btn admin-btn-secondary admin-btn-danger" onclick="AdminApp.restoreFactoryDefaults()" title="Restablecer los 12 títulos originales">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2"/></svg>
+                Restablecer Fábrica
+              </button>
+            </div>
+          </div>
+
+          <!-- Barra de Filtros y Búsqueda -->
+          <div class="admin-toolbar">
+            <div class="admin-toolbar-left">
+              <div class="admin-search-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="admin-search-input" id="admin-book-search-input" placeholder="Buscar por título, autor, ISBN, ref...">
+              </div>
+
+              <select class="admin-filter-select" id="admin-filter-collection-select">
+                <option value="all">Todas las Colecciones</option>
+                <option value="cultura">Cultura</option>
+                <option value="poesia">Poesía</option>
+                <option value="arte">Arte</option>
+                <option value="moda">Moda</option>
+                <option value="tendencias">Tendencias</option>
+              </select>
+
+              <select class="admin-filter-select" id="admin-sort-books-select">
+                <option value="featured">Orden: Destacados primero</option>
+                <option value="title-asc">Título: A — Z</option>
+                <option value="title-desc">Título: Z — A</option>
+                <option value="price-asc">Precio: Menor a Mayor</option>
+                <option value="price-desc">Precio: Mayor a Menor</option>
+                <option value="year">Año de publicación</option>
+              </select>
+            </div>
+
+            <div class="admin-toolbar-right">
+              <span id="admin-books-count-summary" style="font-family:var(--font-heading); font-size:0.8rem; color:var(--text-muted);">
+                Mostrando 0 títulos
+              </span>
+            </div>
+          </div>
+
+          <!-- Tabla de Catálogo -->
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="min-width: 280px;">Portada & Título</th>
+                  <th>Autor / Autora</th>
+                  <th>Colección</th>
+                  <th>Año</th>
+                  <th>Precio (€)</th>
+                  <th>Destacado</th>
+                  <th style="text-align: right;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-books-tbody">
+                <!-- Filas inyectadas -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             TAB 3: GESTIÓN DE PEDIDOS Y ALBARANES
+             ==================================================================== -->
+        <section class="admin-tab-pane" id="tab-pane-orders">
+          <div class="admin-section-header">
+            <div class="admin-header-titles">
+              <h1>Gestión de Pedidos & Logística</h1>
+              <p>Historial de compras, control de estados de expedición, generación e impresión de albaranes oficiales.</p>
+            </div>
+            <div class="admin-header-actions">
+              <button class="admin-btn admin-btn-sm" onclick="AdminApp.generateDemoOrders()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Generar 4 Pedidos Demo
+              </button>
+              <button class="admin-btn admin-btn-sm admin-btn-secondary" onclick="AdminApp.exportFullBackup()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar Pedidos
+              </button>
+            </div>
+          </div>
+
+          <!-- Barra de Filtros de Pedidos -->
+          <div class="admin-toolbar">
+            <div class="admin-toolbar-left">
+              <div class="admin-search-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="admin-search-input" id="admin-order-search-input" placeholder="Buscar por referencia VOR-, nombre, email...">
+              </div>
+
+              <select class="admin-filter-select" id="admin-order-status-filter">
+                <option value="all">Todos los Estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Procesando">Procesando</option>
+                <option value="Enviado">Enviado</option>
+                <option value="Completado">Completado</option>
+              </select>
+            </div>
+
+            <div class="admin-toolbar-right">
+              <span id="admin-orders-count-summary" style="font-family:var(--font-heading); font-size:0.8rem; color:var(--text-muted);">
+                Mostrando 0 pedidos
+              </span>
+            </div>
+          </div>
+
+          <!-- Tabla de Pedidos -->
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Referencia</th>
+                  <th>Fecha y Hora</th>
+                  <th>Comprador & Correo</th>
+                  <th>Ejemplares</th>
+                  <th>Importe Total</th>
+                  <th>Estado del Pedido</th>
+                  <th style="text-align: right;">Albarán & Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-tbody">
+                <!-- Filas de pedidos -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             TAB 4: COLECCIONES EDITORIALES
+             ==================================================================== -->
+        <section class="admin-tab-pane" id="tab-pane-collections">
+          <div class="admin-section-header">
+            <div class="admin-header-titles">
+              <h1>Colecciones Editoriales</h1>
+              <p>Líneas de publicación formal, códigos de referencia curatorial y distribución de obras.</p>
+            </div>
+            <div class="admin-header-actions">
+              <button class="admin-btn" onclick="AdminApp.openNewCollectionModal()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nueva Colección
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-collections-grid" id="admin-collections-container">
+            <!-- Tarjetas de colección inyectadas -->
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             TAB 5: AJUSTES & CONFIGURACIÓN EDITORIAL
+             ==================================================================== -->
+        <section class="admin-tab-pane" id="tab-pane-settings">
+          <div class="admin-section-header">
+            <div class="admin-header-titles">
+              <h1>Ajustes de la Tienda & Pasarela</h1>
+              <p>Configuración de credenciales de cobro, costes de expedición logística y datos fiscales de la editorial.</p>
+            </div>
+            <div class="admin-header-actions">
+              <button class="admin-btn" onclick="AdminApp.saveSettings(event)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Guardar Ajustes
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-settings-grid">
+            <!-- Bloque 1: Pasarela de Pagos PayPal -->
+            <div class="admin-setting-block">
+              <div class="admin-setting-header">
+                <h3>Pasarela Oficial PayPal</h3>
+                <p>Configura las credenciales de la API de PayPal para el botón oficial de cobro.</p>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="setting-paypal-id">PayPal Client ID</label>
+                <input type="text" class="admin-form-input" id="setting-paypal-id" placeholder="test o tu Client ID de PayPal Developer">
+                <span style="font-size:0.75rem; color:var(--text-muted); margin-top:0.3rem;">
+                  Usa <code style="font-family:var(--font-mono); font-weight:bold;">test</code> para operar en modo Sandbox simulado. Para pagos reales, obtén tu credencial en <a href="https://developer.paypal.com/dashboard/applications" target="_blank" rel="noopener" style="color:var(--accent-vermilion);">developer.paypal.com</a>.
+                </span>
+              </div>
+            </div>
+
+            <!-- Bloque 2: Tarifas de Envío y Logística -->
+            <div class="admin-setting-block">
+              <div class="admin-setting-header">
+                <h3>Políticas de Distribución y Envíos</h3>
+                <p>Controla las condiciones de porte para la península y pedidos internacionales.</p>
+              </div>
+
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="setting-shipping-std">Gastos de Envío Estándar (€)</label>
+                  <input type="number" step="0.50" class="admin-form-input" id="setting-shipping-std">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="setting-shipping-threshold">Envío Gratuito a partir de (€)</label>
+                  <input type="number" step="1.00" class="admin-form-input" id="setting-shipping-threshold">
+                </div>
+              </div>
+            </div>
+
+            <!-- Bloque 3: Datos Fiscales y Membrete -->
+            <div class="admin-setting-block">
+              <div class="admin-setting-header">
+                <h3>Datos Fiscales y Razón Social</h3>
+                <p>Estos datos aparecen en los albaranes y facturas proforma generados por el sistema.</p>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="setting-company-name">Razón Social</label>
+                <input type="text" class="admin-form-input" id="setting-company-name">
+              </div>
+
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="setting-company-nif">NIF / CIF</label>
+                  <input type="text" class="admin-form-input" id="setting-company-nif">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="setting-company-email">Email de Contacto</label>
+                  <input type="email" class="admin-form-input" id="setting-company-email">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="setting-company-address">Dirección Postal y Sede</label>
+                <input type="text" class="admin-form-input" id="setting-company-address">
+              </div>
+            </div>
+
+            <!-- Bloque 4: Copias de Seguridad y Reseteo -->
+            <div class="admin-setting-block">
+              <div class="admin-setting-header">
+                <h3>Mantenimiento y Respaldo</h3>
+                <p>Descarga o restaura copias completas de la base de datos de libros, pedidos y configuraciones.</p>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                <button type="button" class="admin-btn admin-btn-secondary" onclick="AdminApp.exportFullBackup()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Descargar Copia de Seguridad Integral (JSON)
+                </button>
+                <button type="button" class="admin-btn admin-btn-secondary" onclick="AdminApp.triggerImportBackup()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  Restaurar Copia desde Archivo JSON
+                </button>
+                <button type="button" class="admin-btn admin-btn-secondary admin-btn-danger" onclick="AdminApp.restoreFactoryDefaults()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2"/></svg>
+                  Restablecer Catálogo Original de Fábrica
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 1: ALTA Y EDICIÓN DE LIBRO (CON LIVE COVER STUDIO)
+       ========================================================================== -->
+  <div class="admin-modal-backdrop" id="modal-book-form" role="dialog" aria-modal="true" aria-labelledby="book-modal-title">
+    <div class="admin-modal-container">
+      <div class="admin-modal-header">
+        <h3 id="book-modal-title">Ficha Editorial del Libro</h3>
+        <button class="drawer-close-btn" onclick="AdminApp.closeBookModal()" title="Cerrar modal (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form onsubmit="AdminApp.saveBookForm(event)">
+        <div class="admin-modal-body">
+          <div class="admin-book-form-grid">
+            
+            <!-- Columna Izquierda: Datos del Libro -->
+            <div class="admin-form-col">
+              <input type="hidden" id="form-book-id">
+
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-title">Título de la Obra *</label>
+                  <input type="text" class="admin-form-input" id="form-book-title" required placeholder="Ej. Arquitectura de lo Efímero">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-author">Autor / Autora *</label>
+                  <input type="text" class="admin-form-input" id="form-book-author" required placeholder="Ej. Marcus V. Holst">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="form-book-subtitle">Subtítulo Descriptivo</label>
+                <input type="text" class="admin-form-input" id="form-book-subtitle" placeholder="Ej. Morfología de los pabellones provisionales y la ruina instantánea">
+              </div>
+
+              <div class="admin-form-row-3">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-collection">Colección</label>
+                  <select class="admin-form-select" id="form-book-collection">
+                    <option value="cultura">Cultura</option>
+                    <option value="poesia">Poesía</option>
+                    <option value="arte">Arte</option>
+                    <option value="moda">Moda</option>
+                    <option value="tendencias">Tendencias</option>
+                  </select>
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-number">Número / Ref.</label>
+                  <input type="text" class="admin-form-input" id="form-book-number" placeholder="Ej. VÉRTICE 15">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-year">Año de Edición</label>
+                  <input type="number" class="admin-form-input" id="form-book-year" value="2026">
+                </div>
+              </div>
+
+              <div class="admin-form-row-3">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-price">Precio (€) *</label>
+                  <input type="number" step="0.50" class="admin-form-input" id="form-book-price" required value="24.00">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-badge">Etiqueta Badge</label>
+                  <input type="text" class="admin-form-input" id="form-book-badge" placeholder="Novedad, Esencial...">
+                </div>
+                <div class="admin-form-group" style="justify-content: flex-end;">
+                  <label class="admin-form-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="form-book-featured">
+                    <span>¿Destacado en Portada?</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-isbn">ISBN</label>
+                  <input type="text" class="admin-form-input" id="form-book-isbn" placeholder="978-84-128941-0-2">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-pages">Páginas</label>
+                  <input type="number" class="admin-form-input" id="form-book-pages" value="312">
+                </div>
+              </div>
+
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-dimensions">Dimensiones</label>
+                  <input type="text" class="admin-form-input" id="form-book-dimensions" value="145 x 220 mm">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-binding">Encuadernación</label>
+                  <input type="text" class="admin-form-input" id="form-book-binding" value="Tapa dura entelada">
+                </div>
+              </div>
+
+              <div class="admin-form-row">
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-paper">Papel Interior</label>
+                  <input type="text" class="admin-form-input" id="form-book-paper" value="Fedrigoni Arena White Smooth 140 g/m²">
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label" for="form-book-typography">Tipografía</label>
+                  <input type="text" class="admin-form-input" id="form-book-typography" value="Space Grotesk & Newsreader">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="form-book-translator">Traductor / Lengua Original</label>
+                <input type="text" class="admin-form-input" id="form-book-translator" value="Original en castellano">
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="form-book-synopsis">Sinopsis Crítica</label>
+                <textarea class="admin-form-textarea" id="form-book-synopsis" placeholder="Texto descriptivo de la obra..."></textarea>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="form-book-quote">Cita Destacada</label>
+                <input type="text" class="admin-form-input" id="form-book-quote" placeholder="«Cita memorable que encabeza el libro...»">
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="form-book-curatorial">Nota Curatorial</label>
+                <textarea class="admin-form-textarea" id="form-book-curatorial" style="min-height: 70px;" placeholder="Relevancia cultural, premios o selección especial..."></textarea>
+              </div>
+            </div>
+
+            <!-- Columna Derecha: Taller de Portadas en Vivo -->
+            <div class="admin-form-col">
+              <div class="admin-cover-studio">
+                <div class="admin-cover-studio-title">
+                  <span>Taller de Portada Vórtice</span>
+                  <span style="font-size:0.65rem; color:var(--accent-vermilion);">Vista Previa Dinámica</span>
+                </div>
+
+                <!-- Recuadro con la portada en vivo -->
+                <div class="admin-live-cover-box" id="admin-live-cover-preview">
+                  <!-- SVG inyectado en tiempo real -->
+                </div>
+
+                <!-- Configuración de la portada -->
+                <div class="admin-form-group" style="width: 100%;">
+                  <label class="admin-form-label" for="form-cover-type">Tipo de Portada</label>
+                  <select class="admin-form-select" id="form-cover-type">
+                    <option value="svg">Geometría Vectorial Suiza (Pentagram Procedural)</option>
+                    <option value="image">Fotografía / Imagen Estática</option>
+                  </select>
+                </div>
+
+                <div class="admin-form-group" id="group-cover-image" style="width: 100%; display: none;">
+                  <label class="admin-form-label" for="form-cover-image">Ruta de la Imagen</label>
+                  <input type="text" class="admin-form-input" id="form-cover-image" placeholder="img/Cover1.jpg">
+                </div>
+
+                <div id="group-cover-svg-settings" style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" for="form-cover-theme">Tema Geométrico</label>
+                    <select class="admin-form-select" id="form-cover-theme">
+                      <option value="geometric-lines">Líneas Geométricas & Círculos Tensos</option>
+                      <option value="blueprint-grid">Retícula Constructivista (Blueprint Grid)</option>
+                      <option value="mist-minimal">Niebla Minimalista & Vectores</option>
+                      <option value="topo-contour">Curvas de Nivel Topográficas</option>
+                      <option value="shutter-iris">Diafragma Óptico & Tiempos</option>
+                      <option value="zigzag-vectors">Vectores Quebrados 60°</option>
+                      <option value="concentric-circles">Círculos Concéntricos de Órbita</option>
+                      <option value="swiss-grid-heavy">Bloque Monumental Suizo (¶ Pilcrow)</option>
+                      <option value="whisper-dots">Matriz de Puntos de Dispersión</option>
+                      <option value="slow-monolith">Monolito & Campo de Color</option>
+                      <option value="circuit-strata">Estratos de Circuito y Nodos</option>
+                      <option value="polar-eclipse">Eclipse Polar & Malla Gravitatoria</option>
+                    </select>
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label class="admin-form-label" for="form-cover-label">Etiqueta de Portada</label>
+                    <input type="text" class="admin-form-input" id="form-cover-label" placeholder="Ej. VÉRTICE · 15">
+                  </div>
+
+                  <!-- Selectores de color -->
+                  <div class="admin-color-picker-row">
+                    <div class="admin-color-picker-item">
+                      <label for="form-cover-bg">Fondo</label>
+                      <div class="admin-color-input-wrap">
+                        <input type="color" id="form-cover-bg" value="#0D0D0D">
+                        <input type="text" id="form-cover-bg-hex" value="#0D0D0D">
+                      </div>
+                    </div>
+
+                    <div class="admin-color-picker-item">
+                      <label for="form-cover-text">Texto</label>
+                      <div class="admin-color-input-wrap">
+                        <input type="color" id="form-cover-text" value="#FFFFFF">
+                        <input type="text" id="form-cover-text-hex" value="#FFFFFF">
+                      </div>
+                    </div>
+
+                    <div class="admin-color-picker-item">
+                      <label for="form-cover-accent">Acento</label>
+                      <div class="admin-color-input-wrap">
+                        <input type="color" id="form-cover-accent" value="#FF3300">
+                        <input type="text" id="form-cover-accent-hex" value="#FF3300">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="admin-btn admin-btn-secondary" onclick="AdminApp.closeBookModal()">Cancelar</button>
+          <button type="submit" class="admin-btn">Guardar Ficha del Libro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: ALBARÁN OFICIAL DE PEDIDO (IMPRIMIBLE)
+       ========================================================================== -->
+  <div class="admin-modal-backdrop" id="modal-order-receipt" role="dialog" aria-modal="true" aria-label="Albarán de Expedición">
+    <div class="admin-modal-container" style="max-width: 820px;">
+      <div class="admin-modal-header">
+        <h3>Albarán de Expedición Editorial</h3>
+        <button class="drawer-close-btn" onclick="AdminApp.closeOrderReceiptModal()" title="Cerrar albarán (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="admin-modal-body" style="padding: 0; max-height: 80vh;" id="receipt-modal-content">
+        <!-- Contenido inyectado por viewOrderReceipt() -->
+      </div>
+
+      <div class="admin-modal-footer">
+        <button type="button" class="admin-btn admin-btn-secondary" onclick="AdminApp.closeOrderReceiptModal()">Cerrar</button>
+        <button type="button" class="admin-btn" onclick="window.print()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Imprimir / Guardar en PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input oculto para importación de backups JSON -->
+  <input type="file" id="input-import-backup-file" accept=".json,application/json" style="display: none;">
+
+  <!-- Scripts -->
+  <script src="js/books.js"></script>
+  <script src="js/covers.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+
+</html>
