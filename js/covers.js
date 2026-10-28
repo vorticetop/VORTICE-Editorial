@@ -12,8 +12,13 @@ const BookCoverRenderer = {
       return `<img src="${coverSrc}" alt="${book.title}" class="vortice-book-cover-img" data-book-id="${book.id}" loading="lazy">`;
     }
 
-    const { title, subtitle, author, number, year, isbn, coverStyle } = book;
-    const { bg, text, accent, theme, label } = coverStyle;
+    const { title, subtitle, author, number, year, isbn } = book;
+    const coverStyle = book.coverStyle || {};
+    const bg = coverStyle.bg || '#0D0D0D';
+    const text = coverStyle.text || '#FFFFFF';
+    const accent = coverStyle.accent || '#FF3300';
+    const theme = coverStyle.theme || 'geometric-lines';
+    const label = coverStyle.label || number || 'VÓRTICE';
 
     // Generar gráficos geométricos según el tema
     let graphicContent = '';
@@ -303,3 +308,7 @@ const BookCoverRenderer = {
     `;
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.BookCoverRenderer = BookCoverRenderer;
+}

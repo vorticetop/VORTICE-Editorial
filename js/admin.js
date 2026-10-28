@@ -387,11 +387,14 @@ const AdminApp = {
     }
 
     tbody.innerHTML = filtered.map(book => {
-      let thumbSvg = '';
-      if (window.BookCoverRenderer) {
-        thumbSvg = BookCoverRenderer.renderSVG(book, { width: 44, height: 66, isThumbnail: true });
+      let coverHtml = '';
+      const renderer = typeof BookCoverRenderer !== 'undefined' ? BookCoverRenderer : (window.BookCoverRenderer || null);
+      if (renderer) {
+        coverHtml = renderer.renderSVG(book, { width: 52, height: 78, isThumbnail: true });
+      } else if (book.coverImage) {
+        coverHtml = `<img src="${book.coverImage}" alt="${book.title}" class="vortice-book-cover-img" loading="lazy">`;
       } else {
-        thumbSvg = `<div style="background:#111;width:100%;height:100%;"></div>`;
+        coverHtml = `<div style="background:#111;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-mono);font-size:0.65rem;">${book.number || 'LIBRO'}</div>`;
       }
 
       const badgeHtml = book.badge 
@@ -402,9 +405,9 @@ const AdminApp = {
         <tr>
           <td>
             <div class="admin-book-cell">
-              <div class="admin-book-thumb">${thumbSvg}</div>
+              <div class="admin-book-thumb admin-book-cover portada-libro" onclick="AdminApp.openEditBookModal('${book.id}')" title="Portada del libro: «${book.title}» (Click para editar)">${coverHtml}</div>
               <div class="admin-book-info">
-                <h4>${book.title}</h4>
+                <h4 onclick="AdminApp.openEditBookModal('${book.id}')" style="cursor:pointer;" title="Editar «${book.title}»">${book.title}</h4>
                 <p>${book.subtitle || ''}</p>
                 <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-muted);">${book.number || ''}</span>
               </div>
@@ -608,8 +611,9 @@ const AdminApp = {
       }
     };
 
-    if (window.BookCoverRenderer) {
-      previewContainer.innerHTML = BookCoverRenderer.renderSVG(mockBook, { width: 220, height: 330 });
+    const renderer = typeof BookCoverRenderer !== 'undefined' ? BookCoverRenderer : (window.BookCoverRenderer || null);
+    if (renderer) {
+      previewContainer.innerHTML = renderer.renderSVG(mockBook, { width: 220, height: 330 });
     }
   },
 
