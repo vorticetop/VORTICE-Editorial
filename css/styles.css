@@ -292,7 +292,7 @@ img.brand-logo-img {
 }
 
 .action-btn {
-  display: inline-flex;
+  display: none !important;
   align-items: center;
   justify-content: center;
   width: 40px;
@@ -343,10 +343,7 @@ button#btn-cart-trigger {
   display: none;
 }
 
-/* Botón menú móvil y panel desplegable */
-.mobile-menu-toggle {
-  display: none;
-}
+
 
 .mobile-nav-panel {
   display: none;
@@ -2091,10 +2088,12 @@ button#btn-cart-trigger {
   body * {
     visibility: hidden;
   }
+
   .order-modal,
   .order-modal * {
     visibility: visible;
   }
+
   .order-modal {
     position: absolute;
     inset: 0;
@@ -2102,12 +2101,14 @@ button#btn-cart-trigger {
     color: #000000 !important;
     padding: 0;
   }
+
   .order-modal-card {
     border: none !important;
     box-shadow: none !important;
     width: 100% !important;
     max-width: 100% !important;
   }
+
   .order-modal-footer,
   .drawer-close-btn {
     display: none !important;
