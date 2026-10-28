@@ -1327,6 +1327,7 @@ img.brand-logo-img {
 }
 
 .btn-drawer-reader {
+  display: none;
   width: 100%;
   padding: 0.85rem;
 }
