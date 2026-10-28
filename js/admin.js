@@ -119,9 +119,10 @@ const AdminApp = {
   },
 
   /* ------------------------------------------------------------------------
-     Carga y Sincronización de Datos
+     Carga y Sincronización de Datos (Local Storage + Supabase PostgreSQL)
      ------------------------------------------------------------------------ */
-  loadData() {
+  async loadData() {
+    // 1. Carga inmediata desde almacenamiento local
     if (typeof loadStoredBooks === 'function') {
       this.books = loadStoredBooks();
     } else {
@@ -135,9 +136,45 @@ const AdminApp = {
     }
 
     this.orders = JSON.parse(localStorage.getItem('vortice-orders') || '[]');
-
-    // Si no hay pedidos, asegurar array
     if (!Array.isArray(this.orders)) this.orders = [];
+
+    // 2. Si Supabase está configurado, sincronizar con PostgreSQL
+    if (window.VorticeDB && VorticeDB.isConnected()) {
+      this.updateSupabaseStatusPill('Sincronizando...', 'default');
+      const isOnline = await VorticeDB.checkHealth();
+      if (isOnline) {
+        this.updateSupabaseStatusPill('🟢 Conectado (PostgreSQL)', 'status-completado');
+
+        const cloudBooks = await VorticeDB.getBooks();
+        if (cloudBooks && cloudBooks.length > 0) {
+          this.books = cloudBooks;
+          if (typeof saveBooksToStorage === 'function') saveBooksToStorage(this.books);
+        }
+
+        const cloudOrders = await VorticeDB.getOrders();
+        if (cloudOrders) {
+          this.orders = cloudOrders;
+          localStorage.setItem('vortice-orders', JSON.stringify(this.orders));
+        }
+
+        const cloudCols = await VorticeDB.getCollections();
+        if (cloudCols && cloudCols.length > 0) {
+          this.collections = cloudCols;
+          if (typeof saveCollectionsToStorage === 'function') saveCollectionsToStorage(this.collections);
+        }
+
+        // Re-renderizar vistas con los datos de la nube
+        this.renderDashboardKPIs();
+        this.renderBooksTable();
+        this.renderOrdersTable();
+        this.renderCollectionsGrid();
+        this.updateBadges();
+      } else {
+        this.updateSupabaseStatusPill('⚠️ Error Conexión', 'status-pendiente');
+      }
+    } else {
+      this.updateSupabaseStatusPill('⚪ Modo Local (Offline)', 'default');
+    }
   },
 
   saveBooks() {
@@ -643,6 +680,12 @@ const AdminApp = {
     }
 
     this.saveBooks();
+
+    // Sincronizar en la nube con Supabase si está activo
+    if (window.VorticeDB && VorticeDB.isConnected()) {
+      VorticeDB.saveBook(bookPayload);
+    }
+
     this.closeBookModal();
     this.refreshAll();
   },
@@ -670,6 +713,9 @@ const AdminApp = {
     if (confirmed) {
       this.books = this.books.filter(b => b.id !== bookId);
       this.saveBooks();
+      if (window.VorticeDB && VorticeDB.isConnected()) {
+        VorticeDB.deleteBook(bookId);
+      }
       this.showToast(`Libro «${book.title}» eliminado del catálogo`);
       this.refreshAll();
     }
@@ -990,9 +1036,23 @@ const AdminApp = {
   },
 
   /* ------------------------------------------------------------------------
-     TAB 5: Ajustes & Configuración de Tienda
+     TAB 5: Ajustes & Configuración de Tienda y Base de Datos
      ------------------------------------------------------------------------ */
   renderSettings() {
+    // Supabase
+    const inputSupaUrl = document.getElementById('setting-supabase-url');
+    if (inputSupaUrl) inputSupaUrl.value = localStorage.getItem('vortice-supabase-url') || '';
+
+    const inputSupaKey = document.getElementById('setting-supabase-key');
+    if (inputSupaKey) inputSupaKey.value = localStorage.getItem('vortice-supabase-key') || '';
+
+    if (window.VorticeDB && VorticeDB.isConnected()) {
+      this.updateSupabaseStatusPill(VorticeDB.isOnline ? '🟢 Conectado (PostgreSQL)' : '⚠️ Configurado (Verificando...)', VorticeDB.isOnline ? 'status-completado' : 'status-pendiente');
+    } else {
+      this.updateSupabaseStatusPill('⚪ Modo Local (Offline)', 'default');
+    }
+
+    // PayPal y Tienda
     const inputPaypal = document.getElementById('setting-paypal-id');
     if (inputPaypal) inputPaypal.value = this.settings.paypalClientId;
 
@@ -1035,6 +1095,87 @@ const AdminApp = {
     localStorage.setItem('vortice-company-email', this.settings.companyEmail);
 
     this.showToast('Configuración editorial y pasarela guardada');
+  },
+
+  /* ------------------------------------------------------------------------
+     Gestión de Base de Datos Cloud (Supabase / PostgreSQL)
+     ------------------------------------------------------------------------ */
+  updateSupabaseStatusPill(text, badgeClass) {
+    const pill = document.getElementById('supabase-status-pill');
+    if (!pill) return;
+    pill.textContent = text;
+    pill.className = `admin-badge-pill ${badgeClass}`;
+  },
+
+  async testAndSaveSupabase() {
+    const url = document.getElementById('setting-supabase-url')?.value.trim();
+    const key = document.getElementById('setting-supabase-key')?.value.trim();
+
+    if (!url || !key) {
+      this.showToast('Introduce tanto la Project URL como la Anon Key de Supabase');
+      return;
+    }
+
+    this.showToast('Comprobando conexión con PostgreSQL...');
+    this.updateSupabaseStatusPill('Verificando...', 'default');
+
+    if (window.VorticeDB) {
+      const ok = await VorticeDB.setCredentials(url, key);
+      if (ok) {
+        this.updateSupabaseStatusPill('🟢 Conectado (PostgreSQL)', 'status-completado');
+        this.showToast('¡Conectado exitosamente con Supabase PostgreSQL!');
+        this.loadData();
+      } else {
+        this.updateSupabaseStatusPill('⚠️ Error de Acceso', 'status-pendiente');
+        this.showToast('No se pudo conectar. Verifica la URL, la Anon Key y que ejecutaste el script SQL.');
+      }
+    }
+  },
+
+  disconnectSupabase() {
+    if (window.VorticeDB) {
+      VorticeDB.clearCredentials();
+      const inputUrl = document.getElementById('setting-supabase-url');
+      if (inputUrl) inputUrl.value = '';
+      const inputKey = document.getElementById('setting-supabase-key');
+      if (inputKey) inputKey.value = '';
+      this.updateSupabaseStatusPill('⚪ Modo Local (Offline)', 'default');
+      this.showToast('Desconectado de Supabase. Operando con base de datos local.');
+    }
+  },
+
+  async migrateToSupabase() {
+    if (!window.VorticeDB || !VorticeDB.isConnected()) {
+      this.showToast('Conecta primero tu proyecto Supabase antes de migrar.');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      '¿Deseas migrar todo el catálogo actual y pedidos a la base de datos de Supabase?\n\n' +
+      'Esto subirá tus libros, colecciones y pedidos a las tablas correspondientes en PostgreSQL.'
+    );
+    if (!confirmed) return;
+
+    this.showToast('Subiendo datos a PostgreSQL...');
+    try {
+      await VorticeDB.migrateLocalData(this.books, this.collections, this.orders, this.settings);
+      this.showToast('¡Migración completada con éxito en Supabase!');
+    } catch (err) {
+      console.error(err);
+      this.showToast('Error durante la migración: ' + err.message);
+    }
+  },
+
+  async copySqlSchema() {
+    try {
+      const res = await fetch('sql/schema.sql');
+      const sql = await res.text();
+      await navigator.clipboard.writeText(sql);
+      this.showToast('¡Script SQL copiado! Pégalo en el SQL Editor de Supabase.');
+    } catch (e) {
+      window.open('sql/schema.sql', '_blank');
+      this.showToast('Abriendo archivo sql/schema.sql...');
+    }
   },
 
   /* ------------------------------------------------------------------------

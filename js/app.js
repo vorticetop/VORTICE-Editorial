@@ -18,7 +18,7 @@ const AppState = {
   readerFont: 'serif' // 'serif' | 'sans'
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
   renderHeroFeature();
   renderCatalog();
@@ -28,6 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
   updateWishlistUI();
   startInternationalClocks();
   PayPalService.init();
+
+  // Sincronización transparente con Supabase en la nube
+  if (window.VorticeDB && VorticeDB.isConnected()) {
+    try {
+      const cloudBooks = await VorticeDB.getBooks();
+      if (cloudBooks && cloudBooks.length > 0) {
+        BOOKS_DATA = cloudBooks;
+        if (typeof saveBooksToStorage === 'function') saveBooksToStorage(cloudBooks);
+        renderHeroFeature();
+        renderCatalog();
+        renderFilterTabs();
+      }
+    } catch (e) {
+      console.warn('Vórtice: No se pudo sincronizar en caliente con Supabase', e);
+    }
+  }
 });
 
 /* ==========================================================================
@@ -950,6 +966,11 @@ function handleOrderSuccess(orderData) {
   const history = JSON.parse(localStorage.getItem('vortice-orders') || '[]');
   history.unshift(orderRecord);
   localStorage.setItem('vortice-orders', JSON.stringify(history));
+
+  // Guardar en base de datos cloud Supabase / PostgreSQL si está configurada
+  if (window.VorticeDB && VorticeDB.isConnected()) {
+    VorticeDB.saveOrder(orderRecord);
+  }
 
   // Vaciar cesta y actualizar UI
   AppState.cart = [];
