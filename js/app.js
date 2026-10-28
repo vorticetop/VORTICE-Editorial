@@ -113,14 +113,6 @@ function renderHeroFeature() {
               Comprar Ejemplar · ${featuredBook.price.toFixed(2)} €
             </button>
 
-            <button class="btn-secondary" onclick="openReader('${featuredBook.id}')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"></path>
-              </svg>
-              Muestra de Lectura
-            </button>
-
             <button class="btn-secondary" onclick="openBookDetail('${featuredBook.id}')" title="Ver ficha técnica completa">
               Ficha Técnica
             </button>
