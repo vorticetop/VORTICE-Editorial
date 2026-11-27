@@ -337,6 +337,7 @@ img.brand-logo-img {
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+
 button#btn-theme-toggle {
   display: none;
 }
@@ -903,7 +904,7 @@ button#btn-theme-toggle {
   text-transform: uppercase;
   padding: 0.6rem 0.5rem;
   text-align: center;
-  display: inline-flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;

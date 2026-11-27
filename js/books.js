@@ -4,32 +4,32 @@ const INITIAL_BOOKS_DATA = [
   {
     id: "vortice-01",
     title: "ALBZ",
-    subtitle: "Acústica de la memoria y arquitectura del vacío urbano",
+    subtitle: "la inspiración que me llevó a crear estos versos",
     author: "Elisabet F. Gutierrez",
     collection: "Poesía",
     collectionId: "Poesía",
-    number: "VÉRTICE 14",
+    number: "PUBLICACIÓN 01",
     year: 2026,
     price: 24.00,
     badge: "Novedad",
     featured: true,
     isbn: "978-84-128941-0-2",
     coverImage: "img/Cover1.jpg",
-    pages: 312,
+    pages: 44,
     dimensions: "145 x 220 mm",
     binding: "Tapa dura",
     paper: "Papel Mate  80 g/m² libre de cloro",
     typography: "Alegreya",
     translator: "Original en castellano",
-    synopsis: "Un ensayo riguroso y poético sobre las zonas mudas de las metrópolis modernas. A través del análisis del urbanismo contemporáneo, Valdés desentraña cómo el ruido constante ha privatizado la atención colectiva y cómo los espacios de silencio se han convertido en el bien más codiciado y disputado del siglo XXI.",
-    quote: "«Y mi corazón,un cazador solitario,se tornó duro como las rocas, para así hacerle Propietario de su muro»",
-    curatorialNote: "Seleccionado como libro del mes por el Instituto de Crítica Urbana de Basilea. Una obra fundamental para entender la relación entre escucha, arquitectura cívica y disidencia.",
+    synopsis: "Hay palabras que nacen del silencio, sentimientos que se esconden entre líneas y recuerdos que permanecen incluso cuando todo parece desaparecer. La poesía es ese refugio donde las emociones encuentran voz, donde el amor, la nostalgia, la libertad y la soledad se transforman en versos. Un viaje íntimo por los rincones del alma, donde cada palabra cuenta una historia y cada poema deja una huella.",
+    quote: "«Este libro forma parte de la inspiración que me llevó a crear estos versos»",
+    curatorialNote: "Una exploración poética de las emociones, la memoria y la experiencia humana. A través de palabras, imágenes y silencios, cada poema construye un universo propio donde convergen la sensibilidad, la reflexión y la imaginación. Una colección de voces y pensamientos que invita a detenerse, mirar hacia dentro y descubrir nuevos significados en aquello que a menudo permanece oculto.",
     coverStyle: {
       bg: "#0D0D0D",
       text: "#FFFFFF",
       accent: "#000000ff",
       theme: "geometric-lines",
-      label: "VÉRTICE · 14"
+      label: "pUBLICACIÓN 01"
     },
     sampleChapter: {
       chapterTitle: "Capítulo I: El umbral de las tres frecuencias",
@@ -54,6 +54,7 @@ const INITIAL_BOOKS_DATA = [
     badge: "Esencial",
     featured: false,
     isbn: "978-84-128941-1-9",
+    coverImage: "img/la_ladrona_de_piedras.jpg",
     pages: 420,
     dimensions: "170 x 240 mm",
     binding: "Rústica cosida con sobrecubierta desplegable en papel Kraft de 180 g",
@@ -63,13 +64,13 @@ const INITIAL_BOOKS_DATA = [
     synopsis: "Holst examina la paradoja de las estructuras diseñadas con fecha de caducidad: desde los pabellones de exposiciones universales hasta las instalaciones nómadas de emergencia. ¿Cómo influye la certeza de la demolición en la osadía constructiva?",
     quote: "«El edificio permanente pacta con la posteridad; el pabellón efímero desafía al instante presente.»",
     curatorialNote: "Incluye 120 planos y esquemas axonométricos a dos tintas, además de un ensayo visual con fotografías de estructuras desaparecidas.",
-    coverStyle: {
-      bg: "#F2F0EB",
-      text: "#1A1A1A",
-      accent: "#0047FF",
-      theme: "blueprint-grid",
-      label: "ESTRUCTURAS · 07"
-    },
+    // coverStyle: {
+    //   bg: "#F2F0EB",
+    //   text: "#1A1A1A",
+    //   accent: "#0047FF",
+    //   theme: "blueprint-grid",
+    //   label: "ESTRUCTURAS · 07"
+    // },
     sampleChapter: {
       chapterTitle: "Prólogo: La belleza de lo que nace para ser desmontado",
       content: [
@@ -515,12 +516,12 @@ let COLLECTIONS_DATA = loadStoredCollections();
 if (!localStorage.getItem('vortice-books')) {
   try {
     localStorage.setItem('vortice-books', JSON.stringify(BOOKS_DATA));
-  } catch (e) {}
+  } catch (e) { }
 }
 if (!localStorage.getItem('vortice-collections')) {
   try {
     localStorage.setItem('vortice-collections', JSON.stringify(COLLECTIONS_DATA));
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function saveBooksToStorage(books) {
@@ -547,6 +548,6 @@ function resetCatalogToDefault() {
   try {
     localStorage.setItem('vortice-books', JSON.stringify(BOOKS_DATA));
     localStorage.setItem('vortice-collections', JSON.stringify(COLLECTIONS_DATA));
-  } catch (e) {}
+  } catch (e) { }
   return { books: BOOKS_DATA, collections: COLLECTIONS_DATA };
 }
